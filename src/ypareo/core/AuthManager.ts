@@ -215,7 +215,8 @@ export class AuthManager {
 				},
 			});
 
-			if (homeRes.status !== 200 || this.isLoginError(homeRes.data)) {
+			const { loginError, errorMessage } = this.isLoginError(homeRes);
+			if (homeRes.status !== 200 || loginError) {
 				this.events.emitDebug('Session invalid on server (cookie expired)');
 
 				if (autoRelogin) {
@@ -224,7 +225,7 @@ export class AuthManager {
 					return await this.login();
 				}
 
-				throw new Error('Session invalid on server');
+				throw new Error('Session invalid on server: ' + errorMessage);
 			}
 
 			const restoredUser = this.session.getUser()!;
