@@ -436,7 +436,12 @@ export class HttpClient {
 			return;
 		const cookies = setCookieHeaders.split(/,(?=\s*\w+=)/);
 
-		for (const cookieString of cookies) {
+		const validCookies: string[] = cookies.filter(cookieStr => {
+			const trimmed = cookieStr.trim().toLowerCase();
+			return !trimmed.includes('=deleted;') && !trimmed.includes('=deleted ');
+		});
+
+		for (const cookieString of validCookies) {
 			const trimmed = cookieString.trim();
 			if (trimmed)
 				this.jar.setCookie(trimmed, requestUrl);
