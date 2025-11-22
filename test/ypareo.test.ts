@@ -1,4 +1,6 @@
 import { User, YpareoClient } from '../src/ypareo';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const client = new YpareoClient({
 	baseUrl: 'https://netypareo.gretacfa-montpellier.fr/netypareo',
