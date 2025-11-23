@@ -1,4 +1,4 @@
-import { User, YpareoClient } from '../src/ypareo';
+import { YpareoClient } from '../src/ypareo';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -9,12 +9,11 @@ const client = new YpareoClient({
 	debug: false,
 });
 
-client.on('ready', (user: User) => {
-	client.saveSession()
+client.on('ready', () => {
 	console.log('\n🎉 [EVENT] ready');
-	console.log('   User:', user.toString());
-	console.log('   Username:', user.username);
-	console.log('   Full name:', user.fullName || '(not found)');
+	console.log('   User:', client.user?.toString());
+	console.log('   Username:', client.user?.username);
+	console.log('   Full name:', client.user?.fullName || '(not found)');
 });
 
 client.on('error', (error) => {

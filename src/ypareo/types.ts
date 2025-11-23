@@ -28,7 +28,10 @@ export interface SerializedSession {
 };
 
 export interface YpareoClientEvents {
-	ready: [user: User];
+	ready: [];
+	logout: [];
+	sessionRestored: [user: User];
+	login: [user: User];
 	debug: [message: string];
 	error: [error: Error];
 }

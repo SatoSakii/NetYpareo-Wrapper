@@ -7,6 +7,21 @@ import type { User } from './models';
 export class YpareoClient extends BaseClient {
 	private events: EventManager;
 	private auth: AuthManager;
+	public user: User | null = null;
+	public readonly session: {
+		/**
+		 * Save the current session state to a string.
+		 * @returns The serialized session data.
+		 */
+		save(): string;
+		/**
+		 * Restore a session from serialized data.
+		 * @param sessionData The serialized session data.
+		 * @param autoRelogin Whether to automatically relogin if the session is expired. Default is true.
+		 * @returns A promise that resolves to the restored User.
+		 */
+		restore(sessionData: string, autoRelogin?: boolean): Promise<User>;
+	}
 
 	/**
 	 * Creates a new YpareoClient instance.
@@ -19,12 +34,35 @@ export class YpareoClient extends BaseClient {
 		this.events = new EventManager(config.debug);
 		this.auth = new AuthManager(
 			this.http,
-			this.session,
+			this.sessions,
 			this.events,
 			this.urls,
 			config.username,
 			config.password
 		);
+
+		this.session = {
+			save: (): string => {
+				if (!this.auth.isConnected())
+					throw new Error('No active session to save');
+				return this.sessions.serialize();
+			},
+			restore: (sessionData: string, autoRelogin = true): Promise<User> => {
+				return this.auth.restoreSession(sessionData, autoRelogin);
+			}
+		}
+
+		this.on('login', (user) => {
+			this.user = user;
+		});
+
+		this.on('sessionRestored', (user) => {
+			this.user = user;
+		});
+
+		this.on('logout', () => {
+			this.user = null;
+		});
 	}
 
 	/**
@@ -71,65 +109,25 @@ export class YpareoClient extends BaseClient {
 
 	/**
 	 * Logs in the user with the provided credentials.
-	 * @returns The current YpareoClient instance for chaining.
 	 */
-	login(): this {
+	login(): void {
 		this.auth.login().catch(() => { });
-		return this;
-	}
-
-	/**
-	 * Logs in the user with the provided credentials asynchronously.
-	 * @returns A promise that resolves to the logged-in User object.
-	 */
-	async loginAsync(): Promise<User> {
-		return this.auth.login();
-	}
-
-	/**
-	 * Restores a previous session using the provided session data.
-	 * @param sessionData - The serialized session data.
-	 * @param autoRelogin - Whether to automatically relogin if the session is invalid.
-	 * @returns A promise that resolves to the restored User object.
-	 */
-	async restoreSession(sessionData: string, autoRelogin: boolean = true): Promise<User> {
-		return this.auth.restoreSession(sessionData, autoRelogin);
-	}
-
-	/**
-	 * Saves the current session and returns the serialized session data.
-	 * @returns The serialized session data as a string.
-	 */
-	saveSession(): string {
-		if (!this.session.isConnected())
-			throw new Error('No active session to save');
-		return this.session.serialize();
 	}
 
 	/**
 	 * Logs out the current user and resets the session.
-	 * @returns The current YpareoClient instance for chaining.
 	 */
-	logout(): this {
+	logout(): void {
 		this.auth.logout().catch(() => { });
-		this.session.reset();
-		return this;
-	}
-
-	/**
-	 * Logs out the current user and resets the session asynchronously.
-	 * @returns A promise that resolves when the logout process is complete.
-	 */
-	async logoutAsync(): Promise<void> {
-		this.session.reset();
-		return this.auth.logout();
+		this.sessions.reset();
+		this.events.emit('logout');
 	}
 
 	/**
 	 * Clears the stored password from the AuthManager.
 	 * @returns void
 	 */
-	clearPassword(): void {
+	protected clearPassword(): void {
 		this.auth.clearPassword();
 	}
 }

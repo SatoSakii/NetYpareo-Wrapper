@@ -101,7 +101,7 @@ export class AuthManager {
 	async login(): Promise<User> {
 		if (this.session.isConnected()) {
 			const user = this.session.getUser()!;
-			this.events.emit('ready', user);
+			this.events.emit('ready');
 			return user;
 		}
 
@@ -165,7 +165,10 @@ export class AuthManager {
 
 			this.events.emitDebug(`Successfully logged in as: ${user.toString()}`);
 
-			this.events.emit('ready', user);
+			this.clearPassword();
+
+			this.events.emit('login', user);
+			this.events.emit('ready');
 
 			return user;
 
@@ -232,7 +235,8 @@ export class AuthManager {
 
 			this.events.emitDebug(`Session restored for: ${restoredUser.toString()}`);
 
-			this.events.emit('ready', restoredUser);
+			this.events.emit('sessionRestored', restoredUser);
+			this.events.emit('ready');
 
 			return restoredUser;
 
