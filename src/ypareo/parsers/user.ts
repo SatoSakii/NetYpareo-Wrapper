@@ -1,4 +1,4 @@
-import { JSDOM } from "jsdom";
+import * as cheerio from 'cheerio';
 import { normalizeText } from "./utils";
 import type { UserData } from "../types";
 
@@ -9,17 +9,15 @@ import type { UserData } from "../types";
  * @returns An object containing the user's data.
  */
 export function parseUser(html: string, username: string): UserData {
-	const dom = new JSDOM(html);
-	const document = dom.window.document;
+	const $ = cheerio.load(html);
 
-	const rawFull = document.getElementsByClassName('resource-informations-title')[0]?.childNodes[0]?.textContent?.trim() ?? null;
+	const rawFull = $('.resource-informations-title').first().text().trim() || null;
 	const fullName = normalizeText(rawFull) || undefined;
-	let thumbnail = document.getElementsByClassName('photo-thumbnail')[0]?.childNodes[0]?.src ?? null;
 
 	return {
 		username,
 		fullName,
-		avatarUrl: thumbnail
+		avatarUrl: undefined
 	};
 }
 
@@ -29,13 +27,8 @@ export function parseUser(html: string, username: string): UserData {
  * @returns The CSRF token if found, otherwise null.
  */
 export function extractCsrfToken(html: string): string | null {
-	try {
-		const dom = new JSDOM(html);
-		const document = dom.window.document;
+	const $ = cheerio.load(html);
 
-		const tokenCsrf = document.querySelector('input[name="token_csrf"]') as HTMLInputElement | null;
-		return tokenCsrf?.value || null;
-	} catch {
-		return null;
-	}
+	const tokenCsrf = $('input[name="token_csrf"]').attr('value') ?? null;
+	return tokenCsrf;
 }
