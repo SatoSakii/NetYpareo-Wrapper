@@ -130,4 +130,8 @@ export class YpareoClient extends BaseClient {
 	protected clearPassword(): void {
 		this.auth.clearPassword();
 	}
+
+	public get httpClient() {
+		return this.http;
+	}
 }

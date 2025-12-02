@@ -10,8 +10,12 @@ import type { UserData } from "../types";
  */
 export function parseUser(html: string, username: string): UserData {
 	const $ = cheerio.load(html);
+	const $label = $('.user-info-label').first();
 
-	const rawFull = $('.resource-informations-title').first().text().trim() || null;
+	let rawFull: string | null = null;
+	if ($label.length)
+		rawFull = $label.clone().children().remove().end().text().trim() || null;
+
 	const fullName = normalizeText(rawFull) || undefined;
 
 	return {
@@ -19,16 +23,4 @@ export function parseUser(html: string, username: string): UserData {
 		fullName,
 		avatarUrl: undefined
 	};
-}
-
-/**
- * Extracts the CSRF token from the given HTML content.
- * @param html - The HTML content to extract the CSRF token from.
- * @returns The CSRF token if found, otherwise null.
- */
-export function extractCsrfToken(html: string): string | null {
-	const $ = cheerio.load(html);
-
-	const tokenCsrf = $('input[name="token_csrf"]').attr('value') ?? null;
-	return tokenCsrf;
 }

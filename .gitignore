@@ -14,3 +14,7 @@ tsconfig.tsbuildinfo
 
 # IDE
 .vscode
+
+# Logs
+ypareo-links.json
+ypareo-links.md
