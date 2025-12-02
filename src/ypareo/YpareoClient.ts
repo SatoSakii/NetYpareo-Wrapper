@@ -3,11 +3,13 @@ import { EventManager } from './core/EventManager';
 import { AuthManager } from './core/AuthManager';
 import type { YpareoClientConfig, YpareoClientEvents } from './types';
 import type { User } from './models';
+import { PlanningManager } from './managers/Planning';
 
 export class YpareoClient extends BaseClient {
 	private events: EventManager;
 	private auth: AuthManager;
 	public user: User | null = null;
+	public readonly planning: PlanningManager;
 	public readonly session: {
 		/**
 		 * Save the current session state to a string.
@@ -40,6 +42,8 @@ export class YpareoClient extends BaseClient {
 			config.username,
 			config.password
 		);
+
+		this.planning = new PlanningManager(this.http);
 
 		this.session = {
 			save: (): string => {

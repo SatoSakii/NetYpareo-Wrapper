@@ -11,6 +11,11 @@ export interface YpareoUrls {
 	login: string;
 	auth: string;
 	home: string;
+	planning: {
+		planning: string;
+		pdf: string;
+		icalendar: string;
+	};
 };
 
 export type SessionState = 'disconnected' | 'connecting' | 'connected' | 'error';
