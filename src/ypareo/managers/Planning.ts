@@ -2,7 +2,7 @@ import type { HttpClient } from '../../http';
 import { Planning } from '../models/planning/Planning';
 import { parsePlanning } from '../parsers/planning';
 import type { WeekCode, ExportMode } from '../models/planning';
-import { DEFAULTS_URLS } from '../constants';
+import { DEFAULTS_HEADERS, DEFAULTS_URLS } from '../constants';
 
 interface CacheEntry {
 	data: Planning;
@@ -35,7 +35,13 @@ export class PlanningManager {
 			? `${DEFAULTS_URLS.planning.planning}?semaineDebut=${weekCode}`
 			: DEFAULTS_URLS.planning.planning;
 
-		const response = await this.http.get(url);
+		const response = await this.http.get(url, {
+			headers: {
+				'Origin': this.http.getBaseUrl(),
+				...DEFAULTS_HEADERS
+			}
+		}
+		);
 		const html = this.toHtml(response.data);
 		const planning = parsePlanning(html, this);
 
@@ -67,7 +73,13 @@ export class PlanningManager {
 	async exportPDF(weekCode: WeekCode, mode: ExportMode = 'calendrier'): Promise<Buffer> {
 		const response = await this.http.get(
 			`${DEFAULTS_URLS.planning.pdf}?semaineDebut=${weekCode}&mode=${mode}`,
-			{ responseType: 'arrayBuffer' }
+			{
+				responseType: 'arrayBuffer',
+				headers: {
+					'Origin': this.http.getBaseUrl(),
+					...DEFAULTS_HEADERS
+				},
+			}
 		);
 
 		return Buffer.from(response.data);

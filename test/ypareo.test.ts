@@ -13,7 +13,7 @@ const client = new YpareoClient({
 client.on('ready', async () => {
 	console.log(`✅ ${client.user?.fullName}\n`);
 
-	const planning = await client.planning.fetch();
+	const planning = await client.planning.fetch(202550);
 
 	console.log(`📊 Week ${planning.week.weekNumber}: ${planning.totalHours}h\n`);
 	console.log(`📅 Today (${planning.today.length}):`);
