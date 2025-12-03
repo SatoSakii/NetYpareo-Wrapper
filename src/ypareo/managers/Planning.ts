@@ -32,8 +32,8 @@ export class PlanningManager {
 			return cached;
 
 		const url = weekCode
-			? `${DEFAULTS_URLS.planning.planning}?semaineDebut=${weekCode}`
-			: DEFAULTS_URLS.planning.planning;
+			? `${DEFAULTS_URLS.planning.default}?semaineDebut=${weekCode}`
+			: DEFAULTS_URLS.planning.default;
 
 		const response = await this.http.get(url, {
 			headers: {

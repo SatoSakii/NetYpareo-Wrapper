@@ -12,9 +12,8 @@ export interface YpareoUrls {
 	auth: string;
 	home: string;
 	planning: {
-		planning: string;
+		default: string;
 		pdf: string;
-		icalendar: string;
 	};
 	attendance: string;
 };
