@@ -2,15 +2,10 @@ import type { HttpClient } from '../../http';
 import { Report } from '../models/attendance';
 import { parseAttendance } from '../parsers';
 import { DEFAULTS_HEADERS, DEFAULTS_URLS } from '../constants';
-
-interface CacheEntry {
-	data: Report;
-	timestamp: number;
-}
+import { bufferToHtml, Cache } from '../utils';
 
 export class AttendanceManager {
-	private cache = new Map<string, CacheEntry>();
-	private cacheTTL = 5 * 60 * 1000;
+	private cache = new Cache<Report>(5);
 
 	/**
 	 * Creates a new AttendanceManager instance.
@@ -25,7 +20,7 @@ export class AttendanceManager {
 	 */
 	async fetch(registrationCode?: number): Promise<Report> {
 		const cacheKey = registrationCode?.toString() ?? '';
-		const cached = this.getCache(cacheKey);
+		const cached = this.cache.get(cacheKey);
 
 		if (cached)
 			return cached;
@@ -42,10 +37,10 @@ export class AttendanceManager {
 				...DEFAULTS_HEADERS
 			}
 		});
-		const html = this.toHtml(Buffer.from(response.data).toString('latin1'));
+		const html = bufferToHtml(response.data);
 		const report = parseAttendance(html);
 
-		this.setCache(cacheKey, report);
+		this.cache.set(cacheKey, report);
 
 		return report;
 	}
@@ -62,46 +57,5 @@ export class AttendanceManager {
 			this.cache.clear();
 
 		return this.fetch(registrationCode);
-	}
-
-	/**
-	 * Gets the cached Report for the specified key if it exists and is still valid.
-	 * @param key - The cache key.
-	 * @returns The cached Report or null if not found or expired.
-	 */
-	private getCache(key: string): Report | null {
-		const entry = this.cache.get(key);
-
-		if (!entry)
-			return null;
-		if (Date.now() - entry.timestamp > this.cacheTTL) {
-			this.cache.delete(key);
-			return null;
-		}
-
-		return entry.data;
-	}
-
-	/**
-	 * Sets the cache for the specified key with the given Report data.
-	 * @param key - The cache key.
-	 * @param data - The Report data to cache.
-	 */
-	private setCache(key: string, data: Report): void {
-		this.cache.set(key, { data, timestamp: Date.now() });
-	}
-
-	/**
-	 * Converts the response data to an HTML string.
-	 * @param data - The response data.
-	 * @returns The HTML string.
-	 */
-	private toHtml(data: any): string {
-		if (Buffer.isBuffer(data))
-			return data.toString('latin1');
-		if (typeof data === 'string')
-			return data;
-
-		throw new Error(`Unexpected response type: ${typeof data}`);
 	}
 }

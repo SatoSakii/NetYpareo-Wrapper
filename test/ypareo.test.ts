@@ -21,7 +21,7 @@ client.on('ready', async () => {
 	console.log(`- Late Arrivals: ${report.summary.latesHours}h`);
 	console.log(`- Justified Absences: ${report.summary.justifiedHours}h`);
 	console.log(`- Unjustified Absences: ${report.summary.unjustifiedHours}h`);
-	console.log(`- Total Absences: ${report.summary.totalHours}h\n`);
+	console.log(`- Total Absences: ${report.summary.totalHours}h`);
 	console.log(`- Absences Hours: ${report.summary.absencesHours}\n`);
 
 	console.log(`📅 Unjustified Details (${report.unjustified.length}):`);

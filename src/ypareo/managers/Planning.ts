@@ -3,16 +3,10 @@ import { Planning } from '../models/planning/Planning';
 import { parsePlanning } from '../parsers/planning';
 import type { WeekCode, ExportMode } from '../models/planning';
 import { DEFAULTS_HEADERS, DEFAULTS_URLS } from '../constants';
-
-interface CacheEntry {
-	data: Planning;
-	timestamp: number;
-}
+import { Cache, bufferToHtml } from '../utils';
 
 export class PlanningManager {
-	private cache = new Map<string, CacheEntry>();
-	private cacheTTL = 5 * 60 * 1000;
-
+	private cache = new Cache<Planning>(5);
 	/**
 	 * Creates a new PlanningManager instance.
 	 * @param http - The HttpClient instance for making requests.
@@ -26,7 +20,7 @@ export class PlanningManager {
 	 */
 	async fetch(weekCode?: WeekCode): Promise<Planning> {
 		const cacheKey = weekCode?.toString() ?? 'current';
-		const cached = this.getCache(cacheKey);
+		const cached = this.cache.get(cacheKey);
 
 		if (cached)
 			return cached;
@@ -43,10 +37,10 @@ export class PlanningManager {
 			}
 		}
 		);
-		const html = this.toHtml(response.data);
+		const html = bufferToHtml(response.data);
 		const planning = parsePlanning(html, this);
 
-		this.setCache(cacheKey, planning);
+		this.cache.set(cacheKey, planning);
 
 		return planning;
 	}
@@ -85,46 +79,5 @@ export class PlanningManager {
 		);
 
 		return Buffer.from(response.data);
-	}
-
-	/**
-	 * Gets a cached Planning instance by its key.
-	 * @param key - The cache key.
-	 * @returns The cached Planning instance, or null if not found or expired.
-	 */
-	private getCache(key: string): Planning | null {
-		const entry = this.cache.get(key);
-
-		if (!entry)
-			return null;
-		if (Date.now() - entry.timestamp > this.cacheTTL) {
-			this.cache.delete(key);
-			return null;
-		}
-
-		return entry.data;
-	}
-
-	/**
-	 * Sets a Planning instance in the cache.
-	 * @param key - The cache key.
-	 * @param data - The Planning instance to cache.
-	 */
-	private setCache(key: string, data: Planning): void {
-		this.cache.set(key, { data, timestamp: Date.now() });
-	}
-
-	/**
-	 * Converts response data to an HTML string.
-	 * @param data - The response data.
-	 * @returns The HTML string.
-	 */
-	private toHtml(data: any): string {
-		if (Buffer.isBuffer(data))
-			return data.toString('latin1');
-		if (typeof data === 'string')
-			return data;
-
-		throw new Error(`Unexpected response type: ${typeof data}`);
 	}
 }
