@@ -27,11 +27,7 @@ export class BaseClient {
 		});
 		this.sessions = new SessionManager(jar);
 		this.urls = {
-			login: DEFAULTS_URLS.login,
-			auth: DEFAULTS_URLS.auth,
-			home: DEFAULTS_URLS.home,
-			planning: DEFAULTS_URLS.planning,
-			attendance: DEFAULTS_URLS.attendance,
-		};
+			...DEFAULTS_URLS,
+		}
 	}
 }

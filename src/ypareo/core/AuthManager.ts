@@ -40,7 +40,7 @@ export class AuthManager {
 		this.urls = urls;
 		this.username = username;
 
-		this.encryptionKey = scryptSync(username + Date.now().toString(), 'salt', 32);
+		this.encryptionKey = scryptSync(username, username.split('').reverse().join(''), 32);
 		this.encryptedPassword = this.encryptPassword(password);
 	}
 

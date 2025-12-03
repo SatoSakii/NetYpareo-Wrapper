@@ -2,7 +2,7 @@ import type { UserData } from "../types";
 
 export class User {
 	public username: string;
-	public fullName?: string
+	public fullName?: string;
 	public avatarUrl?: string;
 
 	/**
