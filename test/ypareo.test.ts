@@ -14,6 +14,20 @@ client.on('ready', async () => {
 	console.log(`✅ ${client.user?.fullName}\n`);
 
 	const planning = await client.planning.fetch(202550);
+	const report = await client.attendance.fetch();
+
+	console.log(`📊 Attendance Report:`);
+	console.log(report.summary.earlyDeparturesHours > 0 ? `- Early Departures: ${report.summary.earlyDeparturesHours}h` : `- Early Departures: None`);
+	console.log(`- Late Arrivals: ${report.summary.latesHours}h`);
+	console.log(`- Justified Absences: ${report.summary.justifiedHours}h`);
+	console.log(`- Unjustified Absences: ${report.summary.unjustifiedHours}h`);
+	console.log(`- Total Absences: ${report.summary.totalHours}h\n`);
+	console.log(`- Absences Hours: ${report.summary.absencesHours}\n`);
+
+	console.log(`📅 Unjustified Details (${report.unjustified.length}):`);
+	report.unjustified.forEach(a => {
+		console.log(`- [${a.startDate.toLocaleDateString()}] ${a.durationHours}h: ${a.reason}`);
+	});
 
 	console.log(`📊 Week ${planning.week.weekNumber}: ${planning.totalHours}h\n`);
 	console.log(`📅 Today (${planning.today.length}):`);

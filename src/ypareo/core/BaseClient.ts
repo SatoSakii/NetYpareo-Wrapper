@@ -30,7 +30,8 @@ export class BaseClient {
 			login: DEFAULTS_URLS.login,
 			auth: DEFAULTS_URLS.auth,
 			home: DEFAULTS_URLS.home,
-			planning: DEFAULTS_URLS.planning
+			planning: DEFAULTS_URLS.planning,
+			attendance: DEFAULTS_URLS.attendance,
 		};
 	}
 }

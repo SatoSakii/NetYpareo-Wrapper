@@ -117,6 +117,7 @@ export class AuthManager {
 			const loginRes = await this.http.get(this.urls.login, {
 				headers: {
 					'Origin': this.http.getBaseUrl(),
+					'Content-Type': 'text/html; charset=UTF-8',
 					...DEFAULTS_HEADERS
 				},
 			});
@@ -143,7 +144,7 @@ export class AuthManager {
 
 			const authRes = await this.http.post(this.urls.auth, formData, {
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
+					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 					'Referer': this.http.getBaseUrl() + this.urls.login,
 					'Origin': this.http.getBaseUrl(),
 					...DEFAULTS_HEADERS
@@ -214,6 +215,7 @@ export class AuthManager {
 				headers: {
 					'Origin': this.http.getBaseUrl(),
 					'Referer': this.http.getBaseUrl() + this.urls.home,
+					'Content-Type': 'text/html; charset=UTF-8',
 					...DEFAULTS_HEADERS
 				},
 			});

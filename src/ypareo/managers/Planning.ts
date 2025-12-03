@@ -38,6 +38,7 @@ export class PlanningManager {
 		const response = await this.http.get(url, {
 			headers: {
 				'Origin': this.http.getBaseUrl(),
+				'Content-Type': 'text/html; charset=UTF-8',
 				...DEFAULTS_HEADERS
 			}
 		}
@@ -77,6 +78,7 @@ export class PlanningManager {
 				responseType: 'arrayBuffer',
 				headers: {
 					'Origin': this.http.getBaseUrl(),
+					'Content-Type': 'text/html; charset=UTF-8',
 					...DEFAULTS_HEADERS
 				},
 			}
@@ -119,7 +121,7 @@ export class PlanningManager {
 	 */
 	private toHtml(data: any): string {
 		if (Buffer.isBuffer(data))
-			return data.toString('utf-8');
+			return data.toString('latin1');
 		if (typeof data === 'string')
 			return data;
 

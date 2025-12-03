@@ -1,0 +1,1 @@
+export { parseAttendance } from './attendance';

@@ -16,6 +16,7 @@ export interface YpareoUrls {
 		pdf: string;
 		icalendar: string;
 	};
+	attendance: string;
 };
 
 export type SessionState = 'disconnected' | 'connecting' | 'connected' | 'error';

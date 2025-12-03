@@ -8,5 +8,6 @@ export const DEFAULTS_URLS: YpareoUrls = {
 		planning: "/index.php/apprenant/planning/courant",
 		pdf: "/index.php/apprenant/planning/hebdo/pdf",
 		icalendar: "/index.php/planning/modal-icalendar-ressource"
-	}
+	},
+	attendance: "/index.php/apprenant/assiduite"
 }
