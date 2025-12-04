@@ -1,4 +1,5 @@
 import { User } from './models';
+import type { Registration } from './models';
 
 export interface YpareoClientConfig {
 	baseUrl: string;
@@ -16,6 +17,10 @@ export interface YpareoUrls {
 		pdf: string;
 	};
 	attendance: string;
+	grades: {
+		default: string;
+		api: string;
+	}
 };
 
 export type SessionState = 'disconnected' | 'connecting' | 'connected' | 'error';
@@ -24,6 +29,7 @@ export interface UserData {
 	username: string;
 	fullName?: string;
 	avatarUrl?: string;
+	registrations?: Registration[];
 };
 
 export interface SerializedSession {

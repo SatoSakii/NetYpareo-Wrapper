@@ -1,10 +1,9 @@
 import { BaseClient } from './core/BaseClient';
 import { EventManager } from './core/EventManager';
 import { AuthManager } from './core/AuthManager';
+import { PlanningManager, AttendanceManager, GradesManager } from './managers';
 import type { YpareoClientConfig, YpareoClientEvents } from './types';
 import type { User } from './models';
-import { PlanningManager } from './managers/Planning';
-import { AttendanceManager } from './managers';
 
 export class YpareoClient extends BaseClient {
 	private events: EventManager;
@@ -12,6 +11,7 @@ export class YpareoClient extends BaseClient {
 	public user: User | null = null;
 	public readonly planning: PlanningManager;
 	public readonly attendance: AttendanceManager;
+	public readonly grades: GradesManager;
 	public readonly session: {
 		/**
 		 * Save the current session state to a string.
@@ -47,6 +47,7 @@ export class YpareoClient extends BaseClient {
 
 		this.planning = new PlanningManager(this.http);
 		this.attendance = new AttendanceManager(this.http);
+		this.grades = new GradesManager(this.http);
 
 		this.session = {
 			save: (): string => {

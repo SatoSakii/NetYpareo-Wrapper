@@ -1,9 +1,11 @@
 import type { UserData } from "../types";
+import { Registration } from "./";
 
 export class User {
 	public username: string;
 	public fullName?: string;
 	public avatarUrl?: string;
+	public registrations: Registration[];
 
 	/**
 	 * Create a new User instance.
@@ -13,6 +15,7 @@ export class User {
 		this.username = data.username;
 		this.fullName = data.fullName;
 		this.avatarUrl = data.avatarUrl;
+		this.registrations = data.registrations || [];
 	}
 
 	/**
@@ -30,6 +33,23 @@ export class User {
 	get lastName(): string | undefined {
 		const parts = this.fullName?.split(' ');
 		return parts && parts.length > 1 ? parts.slice(1).join(' ') : undefined;
+	}
+
+	/**
+	 * Get the default registration of the user.
+	 * @return The first registration, or undefined if there are no registrations.
+	 */
+	get defaultRegistration(): Registration | undefined {
+		return this.registrations[0];
+	}
+
+	/**
+	 * Get a registration by its code.
+	 * @param code The registration code.
+	 * @return The registration with the given code, or undefined if not found.
+	 */
+	getRegistration(code: number): Registration | undefined {
+		return this.registrations.find(r => r.code === code);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import { Report, Summary, AttendRecord } from '../../models/attendance';
 import type { RecordType, RecordStatus } from '../../models/attendance';
+import { parseDate } from '../../utils/Date';
 
 /**
  * Parses the attendance HTML and returns a Report object.
@@ -129,10 +130,4 @@ function parseTimeToMinutes(timeStr: string): number {
 	const hours = parseInt(match[1], 10);
 	const minutes = parseInt(match[2], 10);
 	return hours * 60 + minutes;
-}
-
-function parseDate(dateStr: string): Date {
-	const [day, month, year] = dateStr.split('/').map(Number);
-
-	return new Date(year, month - 1, day);
 }

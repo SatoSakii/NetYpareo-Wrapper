@@ -8,5 +8,9 @@ export const DEFAULTS_URLS: YpareoUrls = {
 		default: "/index.php/apprenant/planning/courant",
 		pdf: "/index.php/apprenant/planning/hebdo/pdf",
 	},
-	attendance: "/index.php/apprenant/assiduite"
+	attendance: "/index.php/apprenant/assiduite",
+	grades: {
+		default: "/index.php/evaluation/releve-notes/apprenant",
+		api: "/index.php/evaluation/releve-notes/liste-devoirs-inscription-par-matiere",
+	}
 }

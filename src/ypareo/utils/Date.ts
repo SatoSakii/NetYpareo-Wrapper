@@ -26,3 +26,14 @@ export function getWeekCode(date: Date): WeekCode {
 export function getCurrentWeekCode(): WeekCode {
 	return getWeekCode(new Date());
 }
+
+/**
+ * Parses a date string in "DD/MM/YYYY" format.
+ * @param dateStr - The date string to parse.
+ * @returns The parsed Date object.
+ */
+export function parseDate(dateStr: string): Date {
+	const [day, month, year] = dateStr.split('/').map(Number);
+
+	return new Date(year, month - 1, day);
+}
