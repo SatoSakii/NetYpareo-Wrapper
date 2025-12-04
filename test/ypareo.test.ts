@@ -1,4 +1,4 @@
-import { DayNumber, YpareoClient } from '../src/ypareo';
+import { DayNumber, getWeekCode, YpareoClient } from '../src/ypareo';
 import dotenv from 'dotenv';
 import { DAYS } from '../src/ypareo/constants/planning';
 dotenv.config();
@@ -13,7 +13,7 @@ const client = new YpareoClient({
 client.on('ready', async () => {
 	console.log(`✅ ${client.user?.fullName}\n`);
 
-	const planning = await client.planning.fetch(202550);
+	const planning = await client.planning.fetch(getWeekCode(new Date('2025-12-08')));
 	const report = await client.attendance.fetch();
 
 	console.log(`📊 Attendance Report:`);
