@@ -63,7 +63,6 @@ function parseGradesTable($: cheerio.CheerioAPI, $subject: cheerio.Cheerio<any>)
 	$subject.find('tbody.table-body tr').each((_, row) => {
 		const $cells = $(row).find('td');
 
-		// Parse teacher info
 		const $teacherCell = $cells.eq(0);
 		const teacherInitials = $teacherCell.find('.tag-initiales').text().trim();
 		const teacherFull = $teacherCell.find('.tag-initiales').attr('data-tooltip-content') || '';
