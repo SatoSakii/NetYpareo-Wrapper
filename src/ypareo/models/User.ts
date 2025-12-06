@@ -69,6 +69,7 @@ export class User {
 			username: this.username,
 			fullName: this.fullName,
 			avatarUrl: this.avatarUrl,
+			registrations: this.registrations
 		};
 	}
 }

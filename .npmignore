@@ -1,0 +1,20 @@
+# Source files
+src/
+test/
+scripts/
+
+# Configuration files
+tsconfig.json
+.env
+tsconfig.tsbuildinfo
+
+# Development files
+node_modules/
+.DS_Store
+.vscode/
+ypareo-links.json
+ypareo-links.md
+
+# Git
+.gitignore
+.git/

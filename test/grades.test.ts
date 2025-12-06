@@ -108,6 +108,7 @@ client.on('ready', async () => {
 	console.log();
 
 	console.log('⚡ Cache Test:');
+	(client.grades as any)['cache'].clear();
 	console.time('First fetch');
 	await client.grades.fetchFullYear(regCode);
 	console.timeEnd('First fetch');

@@ -1,31 +1,71 @@
 {
   "name": "netypareo-wrapper",
-  "version": "0.1.0",
-  "description": "A TypeScript wrapper for the NetYpareo platform.",
-  "license": "ISC",
-  "author": "SatoSaki",
+  "version": "1.0.0",
+  "description": "TypeScript wrapper for the NetYpareo platform.",
+  "license": "MIT",
+  "author": "SatoSakii",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+	"LICENSE",
+	"README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "tsx test/ypareo.test.ts"
+    "build": "npm run build:esm && npm run build:cjs && npm run fix:cjs",
+	"build:esm": "tsc --project tsconfig.json",
+	"build:cjs": "tsc --project tsconfig.cjs.json",
+	"fix:cjs": "node ./scripts/fix-cjs.js",
+	"clean": "rm -rf ./dist",
+    "test:planning": "tsx test/planning.test.js",
+	"test:grades": "tsx test/grades.test.js",
+	"test:attendance": "tsx test/attendance.test.js",
+	"test:session": "tsx test/session.test.js",
+	"test:user": "tsx test/user.test.js",
+	"test:all": "npm run test:planning && npm run test:grades && npm run test:attendance && npm run test:session && npm run test:user"
   },
   "keywords": [
     "netypareo",
     "wrapper",
-    "typescript"
+    "typescript",
+	"planning",
+	"grades",
+	"attendance",
+	"student",
+	"api",
+	"ypareo",
+	"school",
+	"education"
   ],
+  "repository": {
+	"type": "git",
+	"url": "git+https://github.com/SatoSakii/NetYpareo-Wrapper.git"
+  },
+  "bugs":{
+	"url": "https://github.com/SatoSakii/NetYpareo-Wrapper/issues"
+  },
+  "homepage": "https://github.com/SatoSakii/NetYpareo-Wrapper#readme",
   "dependencies": {
-    "dotenv": "^17.2.3",
     "cheerio": "^1.1.2"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
     "@types/node": "^24.10.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "dotenv": "^17.2.3"
   }
 }

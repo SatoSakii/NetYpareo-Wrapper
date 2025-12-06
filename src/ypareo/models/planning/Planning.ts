@@ -146,6 +146,7 @@ export class Planning {
 			totalHours: this.totalHours,
 			totalSessions: this.sessions.length,
 			weeks: this.weeks.map(w => w.toJSON()),
+			sessions: this.sessions
 		};
 	}
 }

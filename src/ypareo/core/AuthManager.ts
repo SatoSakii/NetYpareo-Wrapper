@@ -238,7 +238,7 @@ export class AuthManager {
 			this.events.emitDebug(`Session restored for: ${restoredUser.toString()}`);
 
 			this.events.emit('sessionRestored', restoredUser);
-			this.events.emit('ready');
+			// this.events.emit('ready');
 
 			return restoredUser;
 
