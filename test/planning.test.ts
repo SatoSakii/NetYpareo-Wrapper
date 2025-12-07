@@ -7,8 +7,7 @@ dotenv.config();
 const client = new YpareoClient({
 	baseUrl: 'https://netypareo.gretacfa-montpellier.fr/netypareo',
 	username: process.env.YPAREO_USERNAME || '',
-	password: process.env.YPAREO_PASSWORD || '',
-	debug: false,
+	password: process.env.YPAREO_PASSWORD || ''
 });
 
 client.on('ready', async () => {

@@ -69,7 +69,10 @@ export class Cookie {
 
 			switch (attrKey) {
 				case 'domain':
-					options.domain = attrValue?.startsWith('.') ? attrValue : `.${attrValue || url.hostname}`;
+					if (typeof attrValue === 'string' && attrValue.startsWith('.'))
+						options.domain = attrValue;
+					else
+						options.domain = `.${attrValue || url.hostname}`;
 					break;
 				case 'path':
 					options.path = attrValue || '/';

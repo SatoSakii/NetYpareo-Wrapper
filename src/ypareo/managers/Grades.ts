@@ -1,7 +1,7 @@
 import type { HttpClient } from '../../http';
 import { GradeReport, Period } from '../models';
 import { parseGrades, parseAvailablePeriods } from '../parsers';
-import { DEFAULTS_HEADERS, DEFAULTS_URLS } from '../constants';
+import { DEFAULTS_URLS } from '../constants';
 import { bufferToHtml, Cache } from '../utils';
 
 export class GradesManager {
@@ -31,8 +31,7 @@ export class GradesManager {
 			responseType: 'arrayBuffer',
 			headers: {
 				'Origin': this.http.getBaseUrl(),
-				'Content-Type': 'text/html; charset=UTF-8',
-				...DEFAULTS_HEADERS
+				'Content-Type': 'text/html; charset=UTF-8'
 			}
 		});
 
@@ -78,8 +77,7 @@ export class GradesManager {
 			responseType: 'arrayBuffer',
 			headers: {
 				'Origin': this.http.getBaseUrl(),
-				'Content-Type': 'text/html; charset=UTF-8',
-				...DEFAULTS_HEADERS
+				'Content-Type': 'text/html; charset=UTF-8'
 			}
 		});
 

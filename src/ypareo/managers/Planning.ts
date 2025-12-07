@@ -2,7 +2,7 @@ import type { HttpClient } from '../../http';
 import { Planning } from '../models/planning/Planning';
 import { parsePlanning } from '../parsers/planning';
 import type { WeekCode, ExportMode } from '../models/planning';
-import { DEFAULTS_HEADERS, DEFAULTS_URLS } from '../constants';
+import { DEFAULTS_URLS } from '../constants';
 import { Cache, bufferToHtml } from '../utils';
 
 export class PlanningManager {
@@ -32,8 +32,7 @@ export class PlanningManager {
 		const response = await this.http.get(url, {
 			headers: {
 				'Origin': this.http.getBaseUrl(),
-				'Content-Type': 'text/html; charset=UTF-8',
-				...DEFAULTS_HEADERS
+				'Content-Type': 'text/html; charset=UTF-8'
 			}
 		}
 		);
@@ -72,8 +71,7 @@ export class PlanningManager {
 				responseType: 'arrayBuffer',
 				headers: {
 					'Origin': this.http.getBaseUrl(),
-					'Content-Type': 'text/html; charset=UTF-8',
-					...DEFAULTS_HEADERS
+					'Content-Type': 'text/html; charset=UTF-8'
 				},
 			}
 		);

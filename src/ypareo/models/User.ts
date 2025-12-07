@@ -31,8 +31,12 @@ export class User {
 	 * @return The last name, or undefined if fullName is not set or has no last name.
 	 */
 	get lastName(): string | undefined {
-		const parts = this.fullName?.split(' ');
-		return parts && parts.length > 1 ? parts.slice(1).join(' ') : undefined;
+		if (typeof this.fullName === 'string') {
+			const parts = this.fullName.trim().split(' ');
+
+			return parts && parts.length > 1 ? parts.slice(1).join(' ') : undefined;
+		}
+		return undefined;
 	}
 
 	/**

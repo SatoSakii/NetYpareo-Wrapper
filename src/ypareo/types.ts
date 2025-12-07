@@ -5,7 +5,6 @@ export interface YpareoClientConfig {
 	baseUrl: string;
 	username: string;
 	password: string;
-	debug?: boolean;
 };
 
 export interface YpareoUrls {
@@ -43,6 +42,5 @@ export interface YpareoClientEvents {
 	logout: [];
 	sessionRestored: [user: User];
 	login: [user: User];
-	debug: [message: string];
 	error: [error: Error];
 }

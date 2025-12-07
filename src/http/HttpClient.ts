@@ -1,4 +1,5 @@
 import { CookieJar } from '../cookies';
+import { DEFAULTS_HEADERS } from '../ypareo';
 import {
 	HttpClientOptions,
 	HttpResponse,
@@ -10,12 +11,9 @@ import {
 	RetryOptions,
 } from './types';
 
-const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36';
-
 export class HttpClient {
 	private jar: CookieJar;
 	private baseUrl: string;
-	private userAgent: string;
 	private followRedirects: boolean;
 	private maxRedirects: number;
 	private timeout: number;
@@ -23,7 +21,6 @@ export class HttpClient {
 	private retry: RetryOptions;
 	private validateStatus: (status: number) => boolean;
 	private throwOnHttpError: boolean;
-	private debug: boolean;
 
 	/**
 	 * Build retry options by merging user options with defaults.
@@ -33,7 +30,6 @@ export class HttpClient {
 	constructor(options: HttpClientOptions = {}) {
 		this.jar = options.jar || new CookieJar();
 		this.baseUrl = options.baseUrl?.replace(/\/+$/, '') || '';
-		this.userAgent = options.userAgent || DEFAULT_USER_AGENT;
 		this.followRedirects = options.followRedirects !== false;
 		this.maxRedirects = options.maxRedirects || 10;
 		this.timeout = options.timeout || 30000;
@@ -41,7 +37,6 @@ export class HttpClient {
 		this.retry = this.buildRetryOptions(options.retry);
 		this.validateStatus = options.validateStatus || ((status) => status >= 200 && status < 300);
 		this.throwOnHttpError = options.throwOnHttpError !== false;
-		this.debug = options.debug || false;
 	}
 
 	/**
@@ -145,9 +140,6 @@ export class HttpClient {
 				if (canRetry && shouldRetry) {
 					const delay = retryOptions.retryDelay(attempt);
 
-					if (this.debug)
-						console.log(`[HttpClient] Retry attempt ${attempt + 1} after ${delay}ms due to error:`, error);
-
 					await this.sleep(delay);
 					return executeWithRetry(attempt + 1);
 				}
@@ -183,13 +175,6 @@ export class HttpClient {
 		const headers = this.buildHeaders(url, method, body, options.headers);
 		const { fetchBody, finalHeaders } = this.prepareBody(body, headers);
 
-		if (this.debug) {
-			console.log(`[HttpClient] ${method} ${url}`);
-			console.log('[HttpClient] Request Headers:', finalHeaders);
-			if (fetchBody && typeof fetchBody === 'string')
-				console.log('[HttpClient] Request Body:', fetchBody.slice(0, 500));
-		}
-
 		const coontroller = new AbortController();
 		const timeoutId = setTimeout(() => coontroller.abort(), config.timeout);
 
@@ -205,12 +190,6 @@ export class HttpClient {
 			clearTimeout(timeoutId);
 			this.extractCookies(response, url);
 
-			if (this.debug) {
-				console.log(`[HttpClient] ${response.status} ${response.statusText}`);
-				const setCookie = response.headers.get('set-cookie');
-				if (setCookie)
-					console.log('[HttpClient] Set-Cookie Headers:', setCookie);
-			}
 			if (shouldFollow && this.isRedirect(response.status)) {
 				const location = response.headers.get('location');
 
@@ -218,9 +197,6 @@ export class HttpClient {
 					throw new HttpError('Redirect location header missing', response.status, response.statusText);
 
 				const redirectUrl = this.resolveUrl(url, location);
-
-				if (this.debug)
-					console.log(`[HttpClient] Redirect ${response.status} -> ${redirectUrl}`);
 
 				let redirectMethod: HttpMethod = method;
 				let redirectBody: RequestBody | undefined = body;
@@ -307,8 +283,7 @@ export class HttpClient {
 			retry: this.mergeRetryOptions(options.retry),
 			validateStatus: options.validateStatus || this.validateStatus,
 			responseType: options.responseType || 'text',
-			throwOnHttpError: this.throwOnHttpError,
-			debug: this.debug,
+			throwOnHttpError: this.throwOnHttpError
 		};
 	}
 
@@ -327,13 +302,7 @@ export class HttpClient {
 		customHeaders?: Record<string, string>,
 	): Record<string, string> {
 		const headers: Record<string, string> = {
-			'User-Agent': this.userAgent,
-			'Accept': '*/*',
-			'Accept-Language': 'en-US,en;q=0.9',
-			'Accept-Encoding': 'gzip, deflate, br',
-			'Cache-Control': 'no-cache',
-			'Pragma': 'no-cache',
-			'Connection': 'keep-alive',
+			...DEFAULTS_HEADERS,
 			...this.defaultHeaders,
 			...customHeaders,
 		};
@@ -595,13 +564,5 @@ export class HttpClient {
 	 */
 	getTimeout(): number {
 		return this.timeout;
-	}
-
-	/**
-	 * Enable or disable debug mode.
-	 * @param debug Whether to enable debug mode.
-	 */
-	setDebug(debug: boolean): void {
-		this.debug = debug;
 	}
 }

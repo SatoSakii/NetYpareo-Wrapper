@@ -3,15 +3,12 @@ import type { YpareoClientEvents } from "../types";
 
 export class EventManager {
 	private emitter: EventEmitter;
-	private debug: boolean;
 
 	/**
 	 * Creates an instance of EventManager.
-	 * @param debug - Whether to enable debug logging.
 	 */
-	constructor(debug: boolean = false) {
+	constructor() {
 		this.emitter = new EventEmitter();
-		this.debug = debug;
 	}
 
 	/**
@@ -61,23 +58,5 @@ export class EventManager {
 		...args: YpareoClientEvents[K]
 	): boolean {
 		return this.emitter.emit(event, ...args)
-	}
-
-	/**
-	 * Emits a debug message if debug mode is enabled.
-	 * @param message - The debug message to emit.
-	 */
-	emitDebug(message: string): void {
-		if (this.debug)
-			console.log(`[YpareoClient] ${message}`)
-		this.emit('debug', message);
-	}
-
-	/**
-	 * Sets the debug mode.
-	 * @param debug - Whether to enable debug logging.
-	 */
-	setDebug(debug: boolean): void {
-		this.debug = debug;
 	}
 }

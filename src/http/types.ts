@@ -23,7 +23,6 @@ export interface HttpClientOptions {
 	retry?: Partial<RetryOptions>;
 	validateStatus?: (status: number) => boolean;
 	throwOnHttpError?: boolean;
-	debug?: boolean;
 }
 
 export interface RetryOptions {
@@ -64,7 +63,6 @@ export interface RequestConfig {
 	validateStatus: (status: number) => boolean;
 	responseType: 'json' | 'text' | 'blob' | 'arrayBuffer' | 'stream';
 	throwOnHttpError: boolean;
-	debug: boolean;
 }
 
 export class HttpError extends Error {

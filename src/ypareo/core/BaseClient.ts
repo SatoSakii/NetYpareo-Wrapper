@@ -22,7 +22,6 @@ export class BaseClient {
 		this.http = new HttpClient({
 			jar,
 			baseUrl: config.baseUrl,
-			debug: config.debug || false,
 			followRedirects: true,
 		});
 		this.sessions = new SessionManager(jar);

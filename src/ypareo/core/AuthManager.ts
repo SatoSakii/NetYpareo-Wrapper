@@ -1,8 +1,7 @@
-import type { HttpClient } from '../../http';
+import type { HttpClient, HttpResponse } from '../../http';
 import { SessionManager } from '../core/SessionManager';
 import type { EventManager } from '../core/EventManager';
 import type { YpareoUrls } from '../types';
-import { DEFAULTS_HEADERS } from '../constants';
 
 import { User } from '../models';
 import { parseUser, extractCsrfToken } from '../parsers';
@@ -88,10 +87,8 @@ export class AuthManager {
 	 * @returns void
 	 */
 	clearPassword(): void {
-		if (this.encryptedPassword) {
+		if (this.encryptedPassword)
 			this.encryptedPassword = null;
-			this.events.emitDebug('Password cleared from memory');
-		}
 	}
 
 	/**
@@ -112,13 +109,10 @@ export class AuthManager {
 		this.session.setState('connecting');
 
 		try {
-			this.events.emitDebug('Starting login process...');
-
 			const loginRes = await this.http.get(this.urls.login, {
 				headers: {
 					'Origin': this.http.getBaseUrl(),
-					'Content-Type': 'text/html; charset=UTF-8',
-					...DEFAULTS_HEADERS
+					'Content-Type': 'text/html; charset=UTF-8'
 				},
 			});
 
@@ -126,9 +120,6 @@ export class AuthManager {
 				throw new Error(`Failed to load login page. Status: ${loginRes.status}`);
 
 			const csrfToken = extractCsrfToken(loginRes.data);
-
-			if (csrfToken)
-				this.events.emitDebug(`CSRF token extracted: ${csrfToken.slice(0, 8)}...`);
 
 			const formData = new URLSearchParams();
 			formData.append('login', this.username);
@@ -140,14 +131,11 @@ export class AuthManager {
 			if (csrfToken)
 				formData.append('token_csrf', csrfToken);
 
-			this.events.emitDebug('Submitting authentication...');
-
 			const authRes = await this.http.post(this.urls.auth, formData, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 					'Referer': this.http.getBaseUrl() + this.urls.login,
-					'Origin': this.http.getBaseUrl(),
-					...DEFAULTS_HEADERS
+					'Origin': this.http.getBaseUrl()
 				},
 			});
 
@@ -163,8 +151,6 @@ export class AuthManager {
 
 			this.session.setUser(user);
 			this.session.setState('connected');
-
-			this.events.emitDebug(`Successfully logged in as: ${user.toString()}`);
 
 			this.clearPassword();
 
@@ -192,17 +178,11 @@ export class AuthManager {
 	async restoreSession(sessionData: string, autoRelogin: boolean = true): Promise<User> {
 		try {
 			if (!SessionManager.isSessionValid(sessionData)) {
-				this.events.emitDebug('Session expired (too old)');
-
-				if (autoRelogin) {
-					this.events.emitDebug('Auto re-login enabled, attempting login...');
+				if (autoRelogin)
 					return await this.login();
-				}
 
 				throw new Error('Session expired');
 			}
-
-			this.events.emitDebug('Restoring session...');
 
 			const restoredSession = SessionManager.deserialize(sessionData, this.http.getJar());
 
@@ -210,22 +190,17 @@ export class AuthManager {
 			if (user)
 				this.session.setUser(user);
 
-			this.events.emitDebug('Verifying session with server...');
 			const homeRes = await this.http.get(this.urls.home, {
 				headers: {
 					'Origin': this.http.getBaseUrl(),
 					'Referer': this.http.getBaseUrl() + this.urls.home,
-					'Content-Type': 'text/html; charset=UTF-8',
-					...DEFAULTS_HEADERS
+					'Content-Type': 'text/html; charset=UTF-8'
 				},
 			});
 
 			const { loginError, errorMessage } = this.isLoginError(homeRes);
 			if (homeRes.status !== 200 || loginError) {
-				this.events.emitDebug('Session invalid on server (cookie expired)');
-
 				if (autoRelogin) {
-					this.events.emitDebug('Auto re-login enabled, attempting login...');
 					this.session.reset();
 					return await this.login();
 				}
@@ -234,8 +209,6 @@ export class AuthManager {
 			}
 
 			const restoredUser = this.session.getUser()!;
-
-			this.events.emitDebug(`Session restored for: ${restoredUser.toString()}`);
 
 			this.events.emit('sessionRestored', restoredUser);
 			// this.events.emit('ready');
@@ -249,7 +222,6 @@ export class AuthManager {
 			}
 
 			if (autoRelogin && this.encryptedPassword) {
-				this.events.emitDebug('Session restore failed, attempting auto re-login...');
 				try {
 					this.session.reset();
 					return await this.login();
@@ -277,7 +249,6 @@ export class AuthManager {
 		if (!this.session.isConnected())
 			return;
 
-		this.events.emitDebug('Logging out...');
 		this.session.reset();
 	}
 
@@ -286,11 +257,11 @@ export class AuthManager {
 	 * @param response - The HTTP response data to check.
 	 * @returns True if a login error is detected, false otherwise.
 	 */
-	private isLoginError(response: any): { loginError: boolean; errorMessage: string | null } {
+	private isLoginError(response: HttpResponse): { loginError: boolean; errorMessage: string | null } {
 		let errorMessage = 'Unknown error.';
-		const error = response?.config?.url?.toString().slice(-2).replace(/\//g, '') || '';
+		const error = response.config.url.toString().slice(-2).replace(/\//g, '') || '';
 
-		if (!response?.config?.url?.toString().includes("login"))
+		if (!response.config.url.toString().includes("login"))
 			return { loginError: false, errorMessage: null };
 		if (error === '2')
 			errorMessage = 'Invalid credentials.';

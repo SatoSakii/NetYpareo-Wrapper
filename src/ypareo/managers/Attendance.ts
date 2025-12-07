@@ -1,7 +1,7 @@
 import type { HttpClient } from '../../http';
 import { Report } from '../models/attendance';
 import { parseAttendance } from '../parsers';
-import { DEFAULTS_HEADERS, DEFAULTS_URLS } from '../constants';
+import { DEFAULTS_URLS } from '../constants';
 import { bufferToHtml, Cache } from '../utils';
 
 export class AttendanceManager {
@@ -33,8 +33,7 @@ export class AttendanceManager {
 			responseType: 'arrayBuffer',
 			headers: {
 				'Origin': this.http.getBaseUrl(),
-				'Content-Type': 'text/html; charset=UTF-8',
-				...DEFAULTS_HEADERS
+				'Content-Type': 'text/html; charset=UTF-8'
 			}
 		});
 		const html = bufferToHtml(response.data);

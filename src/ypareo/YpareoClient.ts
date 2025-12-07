@@ -35,7 +35,7 @@ export class YpareoClient extends BaseClient {
 	constructor(config: YpareoClientConfig) {
 		super(config);
 
-		this.events = new EventManager(config.debug);
+		this.events = new EventManager();
 		this.auth = new AuthManager(
 			this.http,
 			this.sessions,
