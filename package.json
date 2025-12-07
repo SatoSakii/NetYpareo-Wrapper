@@ -1,71 +1,80 @@
 {
-  "name": "netypareo-wrapper",
-  "version": "1.0.1",
-  "description": "TypeScript wrapper for the NetYpareo platform.",
-  "license": "MIT",
-  "author": "SatoSakii",
-  "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
-  "exports": {
-	".": {
-	  "import": {
-		"types": "./dist/esm/index.d.ts",
-		"default": "./dist/esm/index.js"
-	  },
-	  "require": {
-		"types": "./dist/cjs/index.d.ts",
-		"default": "./dist/cjs/index.js"
-	  }
-	}
-  },
-  "files": [
-	"dist",
-	"LICENSE",
-	"README.md"
-  ],
-  "scripts": {
-	"build": "npm run build:esm && npm run build:cjs && npm run fix:cjs",
-	"build:esm": "tsc --project tsconfig.json",
-	"build:cjs": "tsc --project tsconfig.cjs.json",
-	"fix:cjs": "node ./scripts/fix-cjs.js",
-	"clean": "rm -rf ./dist",
-	"test:planning": "tsx test/planning.test.js",
-	"test:grades": "tsx test/grades.test.js",
-	"test:attendance": "tsx test/attendance.test.js",
-	"test:session": "tsx test/session.test.js",
-	"test:user": "tsx test/user.test.js",
-	"test:all": "npm run test:planning && npm run test:grades && npm run test:attendance && npm run test:session && npm run test:user"
-  },
-  "keywords": [
-	"netypareo",
-	"wrapper",
-	"typescript",
-	"planning",
-	"grades",
-	"attendance",
-	"student",
-	"api",
-	"ypareo",
-	"school",
-	"education"
-  ],
-  "repository": {
-	"type": "git",
-	"url": "git+https://github.com/SatoSakii/NetYpareo-Wrapper.git"
-  },
-  "bugs":{
-	"url": "https://github.com/SatoSakii/NetYpareo-Wrapper/issues"
-  },
-  "homepage": "https://github.com/SatoSakii/NetYpareo-Wrapper#readme",
-  "dependencies": {
-	"cheerio": "^1.1.2"
-  },
-  "devDependencies": {
-	"@types/cheerio": "^0.22.35",
-	"@types/node": "^24.10.1",
-	"typescript": "^5.9.3",
-	"dotenv": "^17.2.3"
-  }
+    "name": "netypareo-wrapper",
+    "version": "1.0.1",
+    "description": "TypeScript wrapper for the NetYpareo platform.",
+    "license": "MIT",
+    "author": "SatoSakii",
+    "type": "module",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
+    "types": "./dist/esm/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/esm/index.d.ts",
+                "default": "./dist/esm/index.js"
+            },
+            "require": {
+                "types": "./dist/cjs/index.d.ts",
+                "default": "./dist/cjs/index.js"
+            }
+        }
+    },
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "npm run build:esm && npm run build:cjs && npm run fix:cjs",
+        "build:esm": "tsc --project tsconfig.json",
+        "build:cjs": "tsc --project tsconfig.cjs.json",
+        "fix:cjs": "node ./scripts/fix-cjs.js",
+        "clean": "rm -rf ./dist",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix",
+        "test:planning": "tsx test/planning.test.js",
+        "test:grades": "tsx test/grades.test.js",
+        "test:attendance": "tsx test/attendance.test.js",
+        "test:session": "tsx test/session.test.js",
+        "test:user": "tsx test/user.test.js",
+        "test:all": "npm run test:planning && npm run test:grades && npm run test:attendance && npm run test:session && npm run test:user"
+    },
+    "keywords": [
+        "netypareo",
+        "wrapper",
+        "typescript",
+        "planning",
+        "grades",
+        "attendance",
+        "student",
+        "api",
+        "ypareo",
+        "school",
+        "education"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SatoSakii/NetYpareo-Wrapper.git"
+    },
+    "bugs": {
+        "url": "https://github.com/SatoSakii/NetYpareo-Wrapper/issues"
+    },
+    "homepage": "https://github.com/SatoSakii/NetYpareo-Wrapper#readme",
+    "dependencies": {
+        "cheerio": "^1.1.2"
+    },
+    "devDependencies": {
+        "@types/cheerio": "^0.22.35",
+        "@types/node": "^24.10.1",
+        "dotenv": "^17.2.3",
+        "eslint": "^9.39.1",
+        "@typescript-eslint/eslint-plugin": "^8.48.1",
+        "@typescript-eslint/parser": "^8.48.1",
+        "eslint-import-resolver-typescript": "^4.4.4",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-prettier": "^5.5.4",
+        "eslint-plugin-simple-import-sort": "^12.1.1",
+        "typescript": "^5.9.3"
+    }
 }

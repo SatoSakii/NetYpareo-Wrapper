@@ -7,6 +7,9 @@ scripts/
 tsconfig.json
 .env
 tsconfig.tsbuildinfo
+eslint.config.mjs
+.prettierrc
+.prettierignore
 
 # Development files
 node_modules/

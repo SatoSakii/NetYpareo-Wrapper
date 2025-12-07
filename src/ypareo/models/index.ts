@@ -1,5 +1,5 @@
-export { User } from "./User";
-export { Registration } from "./Registration";
-export * from "./planning";
-export * from "./attendance";
-export * from "./grades";
+export * from './attendance'
+export * from './grades'
+export * from './planning'
+export { Registration } from './Registration'
+export { User } from './User'

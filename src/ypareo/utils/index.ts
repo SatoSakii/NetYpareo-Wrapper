@@ -1,3 +1,3 @@
-export { Cache } from './Cache';
-export { bufferToHtml } from './Html';
-export { getWeekCode, getCurrentWeekCode } from './Date';
+export { Cache } from './Cache'
+export { getCurrentWeekCode, getWeekCode } from './Date'
+export { bufferToHtml } from './Html'

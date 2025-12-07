@@ -1,4 +1,3 @@
-
 # NetYpareo-Wrapper
 
 A TypeScript wrapper for the NetYpareo platform.
@@ -19,17 +18,19 @@ A TypeScript wrapper for the NetYpareo platform.
 ```bash
 npm install netypareo-wrapper
 ```
+
 ## ✍️ Authors
 
 - [@SatoSakii](https://www.github.com/SatoSakii)
 
-
 ## 🤝 Contributing
 
 Contributions are always welcome!
+
 ## ⚠️ Disclaimer
 
 This is an unofficial wrapper for NetYpareo. Use at your own risk.
+
 ## 📄 License
 
 MIT - Free to use with attribution. See [LICENSE](https://github.com/SatoSakii/NetYpareo-Wrapper/blob/main/LICENSE) for details.

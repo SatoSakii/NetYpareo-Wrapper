@@ -1,1 +1,1 @@
-export { parseAttendance } from './attendance';
+export { parseAttendance } from './attendance'

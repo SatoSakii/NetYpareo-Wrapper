@@ -1,1 +1,1 @@
-export { parseGrades, parseAvailablePeriods } from './grades';
+export { parseAvailablePeriods, parseGrades } from './grades'
