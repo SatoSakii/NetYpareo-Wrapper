@@ -60,7 +60,7 @@ export const HttpClientDefaults = {
     TIMEOUT_MS: 30000,
     MAX_REDIRECTS: 10,
     MAX_RETRIES: 3,
-};
+} as const;
 
 export type RequestBody =
     | string
