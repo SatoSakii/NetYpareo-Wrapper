@@ -14,7 +14,7 @@ export class Icon {
      * @returns True if the icon is for homework, false otherwise.
      */
     get isHomework(): boolean {
-        return this.cssClass.includes('picto-blue-t')
+        return this.cssClass.includes('picto-blue-t');
     }
 
     /**
@@ -26,6 +26,6 @@ export class Icon {
             label: this.label,
             cssClass: this.cssClass,
             isHomework: this.isHomework,
-        }
+        };
     }
 }

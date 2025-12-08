@@ -1,4 +1,4 @@
-import { YpareoUrls } from '../types'
+import { YpareoUrls } from '../types';
 
 export const DEFAULTS_URLS: YpareoUrls = {
     login: '/index.php/login',
@@ -13,4 +13,4 @@ export const DEFAULTS_URLS: YpareoUrls = {
         default: '/index.php/evaluation/releve-notes/apprenant',
         api: '/index.php/evaluation/releve-notes/liste-devoirs-inscription-par-matiere',
     },
-}
+};

@@ -1,15 +1,15 @@
-import { EventEmitter } from 'events'
+import { EventEmitter } from 'events';
 
-import type { YpareoClientEvents } from '../types'
+import type { YpareoClientEvents } from '../types';
 
 export class EventManager {
-    private emitter: EventEmitter
+    private emitter: EventEmitter;
 
     /**
      * Creates an instance of EventManager.
      */
     constructor() {
-        this.emitter = new EventEmitter()
+        this.emitter = new EventEmitter();
     }
 
     /**
@@ -21,7 +21,7 @@ export class EventManager {
         event: K,
         listener: (...args: YpareoClientEvents[K]) => void
     ): void {
-        this.emitter.on(event, listener)
+        this.emitter.on(event, listener);
     }
 
     /**
@@ -33,7 +33,7 @@ export class EventManager {
         event: K,
         listener: (...args: YpareoClientEvents[K]) => void
     ): void {
-        this.emitter.once(event, listener)
+        this.emitter.once(event, listener);
     }
 
     /**
@@ -45,7 +45,7 @@ export class EventManager {
         event: K,
         listener: (...args: YpareoClientEvents[K]) => void
     ): void {
-        this.emitter.off(event, listener)
+        this.emitter.off(event, listener);
     }
 
     /**
@@ -58,6 +58,6 @@ export class EventManager {
         event: K,
         ...args: YpareoClientEvents[K]
     ): boolean {
-        return this.emitter.emit(event, ...args)
+        return this.emitter.emit(event, ...args);
     }
 }

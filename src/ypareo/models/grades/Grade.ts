@@ -1,4 +1,4 @@
-import type { EvaluationType, GradeStatus } from './types'
+import type { EvaluationType, GradeStatus } from './types';
 
 export class Grade {
     /**
@@ -30,7 +30,7 @@ export class Grade {
      * @return True if the grade is assigned, false otherwise.
      */
     get isGraded(): boolean {
-        return this.status === 'graded'
+        return this.status === 'graded';
     }
 
     /**
@@ -38,7 +38,7 @@ export class Grade {
      * @return True if the student was absent, false otherwise.
      */
     get isAbsent(): boolean {
-        return this.status === 'absent'
+        return this.status === 'absent';
     }
 
     /**
@@ -58,6 +58,6 @@ export class Grade {
             absenceReason: this.absenceReason,
             isAbsent: this.isAbsent,
             isGraded: this.isGraded,
-        }
+        };
     }
 }

@@ -1,20 +1,21 @@
-import type { HttpResponse } from "../../../http";
+import type { HttpResponse } from '../../../http';
 
 export const LoginErrorCode = {
-	INVALID_CREDENTIALS: '2',
-	ACCOUNT_LOCKED: '4',
-} as const
+    INVALID_CREDENTIALS: '2',
+    ACCOUNT_LOCKED: '4',
+} as const;
 
-export type LoginErrorCode = typeof LoginErrorCode[keyof typeof LoginErrorCode]
+export type LoginErrorCode =
+    (typeof LoginErrorCode)[keyof typeof LoginErrorCode];
 
 export const LoginErrorMessages: Record<LoginErrorCode, string> = {
-	[LoginErrorCode.INVALID_CREDENTIALS]: 'Invalid credentials.',
-	[LoginErrorCode.ACCOUNT_LOCKED]: 'Account disabled.'
-}
+    [LoginErrorCode.INVALID_CREDENTIALS]: 'Invalid credentials.',
+    [LoginErrorCode.ACCOUNT_LOCKED]: 'Account disabled.',
+};
 
 export interface LoginErrorResult {
-	loginError: boolean
-	errorMessage: string | null
+    loginError: boolean;
+    errorMessage: string | null;
 }
 
 /**
@@ -30,7 +31,7 @@ export function parseLoginError(response: HttpResponse): LoginErrorResult {
     }
 
     const errorCode = url.slice(-2).replace(/\//g, '') as LoginErrorCode;
-    const errorMessage = LoginErrorMessages[errorCode] ??  'Unknown error.';
+    const errorMessage = LoginErrorMessages[errorCode] ?? 'Unknown error.';
 
     return { loginError: true, errorMessage };
 }

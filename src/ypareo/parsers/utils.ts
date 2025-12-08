@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio'
+import * as cheerio from 'cheerio';
 
 /**
  * Normalizes text by replacing multiple whitespace characters with a single space and trimming.
@@ -6,8 +6,8 @@ import * as cheerio from 'cheerio'
  * @returns The normalized string or null if the input is null or undefined.
  */
 export function normalizeText(s?: string | null): string | null {
-    if (!s) return null
-    return s.replace(/\s+/g, ' ').trim()
+    if (!s) return null;
+    return s.replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -16,8 +16,8 @@ export function normalizeText(s?: string | null): string | null {
  * @returns The CSRF token if found, otherwise null.
  */
 export function extractCsrfToken(html: string): string | null {
-    const $ = cheerio.load(html)
+    const $ = cheerio.load(html);
 
-    const tokenCsrf = $('input[name="token_csrf"]').attr('value') ?? null
-    return tokenCsrf
+    const tokenCsrf = $('input[name="token_csrf"]').attr('value') ?? null;
+    return tokenCsrf;
 }

@@ -1,7 +1,7 @@
-import { DAY_NAMES, MINUTES_PER_HOUR } from '../../constants/planning'
-import { Icon } from './Icon'
-import { Metadata } from './Metadata'
-import type { DayNumber, SessionType, TimeString } from './types'
+import { DAY_NAMES, MINUTES_PER_HOUR } from '../../constants/planning';
+import { Icon } from './Icon';
+import { Metadata } from './Metadata';
+import type { DayNumber, SessionType, TimeString } from './types';
 
 export class Session {
     /**
@@ -41,10 +41,10 @@ export class Session {
      * @returns The start time as a string.
      */
     get startTime(): TimeString {
-        const hours = Math.floor(this.startMinute / MINUTES_PER_HOUR)
-        const minutes = this.startMinute % MINUTES_PER_HOUR
+        const hours = Math.floor(this.startMinute / MINUTES_PER_HOUR);
+        const minutes = this.startMinute % MINUTES_PER_HOUR;
 
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` as TimeString
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` as TimeString;
     }
 
     /**
@@ -52,11 +52,11 @@ export class Session {
      * @returns The end time as a string.
      */
     get endTime(): TimeString {
-        const totalMinutes = this.startMinute + this.duration
-        const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR)
-        const minutes = totalMinutes % MINUTES_PER_HOUR
+        const totalMinutes = this.startMinute + this.duration;
+        const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR);
+        const minutes = totalMinutes % MINUTES_PER_HOUR;
 
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` as TimeString
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` as TimeString;
     }
 
     /**
@@ -64,7 +64,7 @@ export class Session {
      * @returns The day name.
      */
     get dayName(): string {
-        return DAY_NAMES[this.dayNumber]
+        return DAY_NAMES[this.dayNumber];
     }
 
     /**
@@ -72,7 +72,7 @@ export class Session {
      * @returns The duration in hours.
      */
     get durationHours(): number {
-        return Math.round((this.duration / MINUTES_PER_HOUR) * 100) / 100
+        return Math.round((this.duration / MINUTES_PER_HOUR) * 100) / 100;
     }
 
     /**
@@ -80,7 +80,7 @@ export class Session {
      * @returns The group name or null if not available.
      */
     get group(): string | null {
-        return this.details[0] ?? null
+        return this.details[0] ?? null;
     }
 
     /**
@@ -88,7 +88,7 @@ export class Session {
      * @returns The teacher name or null if not available.
      */
     get teacher(): string | null {
-        return this.details[1] ?? null
+        return this.details[1] ?? null;
     }
 
     /**
@@ -96,7 +96,7 @@ export class Session {
      * @returns The room name or null if not available.
      */
     get room(): string | null {
-        return this.details[2] ?? null
+        return this.details[2] ?? null;
     }
 
     /**
@@ -104,7 +104,7 @@ export class Session {
      * @returns True if the session has homework, false otherwise.
      */
     get hasHomework(): boolean {
-        return this.icons.some((icon) => icon.isHomework)
+        return this.icons.some(icon => icon.isHomework);
     }
 
     /**
@@ -123,6 +123,6 @@ export class Session {
             room: this.room,
             group: this.group,
             hasHomework: this.hasHomework,
-        }
+        };
     }
 }

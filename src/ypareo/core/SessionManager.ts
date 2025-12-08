@@ -1,18 +1,18 @@
-import { CookieJar } from '../../cookies'
-import { User } from '../models'
-import type { SerializedSession, SessionState } from '../types'
+import { CookieJar } from '../../cookies';
+import { User } from '../models';
+import type { SerializedSession, SessionState } from '../types';
 
 export class SessionManager {
-    private state: SessionState = 'disconnected'
-    private user: User | null = null
-    private jar: CookieJar
+    private state: SessionState = 'disconnected';
+    private user: User | null = null;
+    private jar: CookieJar;
 
     /**
      * Create a new SessionManager instance.
      * @param jar The CookieJar instance to manage session cookies.
      */
     constructor(jar: CookieJar) {
-        this.jar = jar
+        this.jar = jar;
     }
 
     /**
@@ -20,7 +20,7 @@ export class SessionManager {
      * @return The current session state.
      */
     getState(): SessionState {
-        return this.state
+        return this.state;
     }
 
     /**
@@ -28,7 +28,7 @@ export class SessionManager {
      * @param state The new session state.
      */
     setState(state: SessionState): void {
-        this.state = state
+        this.state = state;
     }
 
     /**
@@ -36,7 +36,7 @@ export class SessionManager {
      * @return The current user, or null if not connected.
      */
     getUser(): User | null {
-        return this.user
+        return this.user;
     }
 
     /**
@@ -44,8 +44,8 @@ export class SessionManager {
      * @param user The user to set.
      */
     setUser(user: User): void {
-        this.user = user
-        this.state = 'connected'
+        this.user = user;
+        this.state = 'connected';
     }
 
     /**
@@ -53,7 +53,7 @@ export class SessionManager {
      * @return The current CookieJar.
      */
     getJar(): CookieJar {
-        return this.jar
+        return this.jar;
     }
 
     /**
@@ -61,9 +61,9 @@ export class SessionManager {
      * This clears the user and cookies, and sets the state to 'disconnected'.
      */
     reset(): void {
-        this.state = 'disconnected'
-        this.user = null
-        this.jar.clear()
+        this.state = 'disconnected';
+        this.user = null;
+        this.jar.clear();
     }
 
     /**
@@ -71,7 +71,7 @@ export class SessionManager {
      * @return True if connected, false otherwise.
      */
     isConnected(): boolean {
-        return this.state === 'connected' && this.user !== null
+        return this.state === 'connected' && this.user !== null;
     }
 
     /**
@@ -82,14 +82,14 @@ export class SessionManager {
         if (!this.isConnected() || !this.user)
             throw new Error(
                 'Cannot serialize session: not connected or user is null.'
-            )
+            );
 
         const session: SerializedSession = {
             user: this.user.toJSON(),
             cookies: this.jar.serialize(),
             timestamp: Date.now(),
-        }
-        return JSON.stringify(session)
+        };
+        return JSON.stringify(session);
     }
 
     /**
@@ -99,17 +99,17 @@ export class SessionManager {
      * @return The restored SessionManager instance.
      */
     static deserialize(data: string, jar: CookieJar): SessionManager {
-        const session: SerializedSession = JSON.parse(data)
+        const session: SerializedSession = JSON.parse(data);
 
-        const restoredJar = CookieJar.deserialize(session.cookies)
+        const restoredJar = CookieJar.deserialize(session.cookies);
 
         for (const cookie of restoredJar.getAllCookies())
-            jar.setCookie(cookie, 'https://placeholder.com')
+            jar.setCookie(cookie, 'https://placeholder.com');
 
-        const manager = new SessionManager(jar)
-        manager.setUser(new User(session.user))
+        const manager = new SessionManager(jar);
+        manager.setUser(new User(session.user));
 
-        return manager
+        return manager;
     }
 
     /**
@@ -123,11 +123,11 @@ export class SessionManager {
         maxAge: number = 24 * 60 * 60 * 1000
     ): boolean {
         try {
-            const session: SerializedSession = JSON.parse(data)
-            const age = Date.now() - session.timestamp
-            return age < maxAge
+            const session: SerializedSession = JSON.parse(data);
+            const age = Date.now() - session.timestamp;
+            return age < maxAge;
         } catch {
-            return false
+            return false;
         }
     }
 }

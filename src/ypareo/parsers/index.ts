@@ -1,5 +1,5 @@
-export { parseAttendance } from './attendance'
-export { parseAvailablePeriods, parseGrades } from './grades'
-export { parsePlanning } from './planning'
-export { parseUser } from './user'
-export { extractCsrfToken, normalizeText } from './utils'
+export { parseAttendance } from './attendance';
+export { parseAvailablePeriods, parseGrades } from './grades';
+export { parsePlanning } from './planning';
+export { parseUser } from './user';
+export { extractCsrfToken, normalizeText } from './utils';

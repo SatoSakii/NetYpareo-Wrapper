@@ -16,7 +16,7 @@ export class Period {
      * @return True if the period is a full year, false otherwise.
      */
     get isFullYear(): boolean {
-        return this.code === -1
+        return this.code === -1;
     }
 
     /**
@@ -24,9 +24,9 @@ export class Period {
      * @return The academic year in "YYYY-YYYY" format, or null if not applicable.
      */
     get year(): string | null {
-        const match = this.name.match(/\((\d{4}-\d{4})\)/)
+        const match = this.name.match(/\((\d{4}-\d{4})\)/);
 
-        return match ? match[1] : null
+        return match ? match[1] : null;
     }
 
     /**
@@ -40,6 +40,6 @@ export class Period {
             sessionCode: this.sessionCode,
             year: this.year,
             isFullYear: this.isFullYear,
-        }
+        };
     }
 }

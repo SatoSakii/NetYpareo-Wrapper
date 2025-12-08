@@ -1,5 +1,5 @@
-import { FULL_DAY_THRESHOLD } from '../../constants/'
-import type { DayNumber } from './'
+import { FULL_DAY_THRESHOLD } from '../../constants/';
+import type { DayNumber } from './';
 
 export class Constraint {
     /**
@@ -23,7 +23,7 @@ export class Constraint {
      * @returns True if the constraint is a full-day constraint, false otherwise.
      */
     get isFullDay(): boolean {
-        return this.duration >= FULL_DAY_THRESHOLD
+        return this.duration >= FULL_DAY_THRESHOLD;
     }
 
     /**
@@ -31,7 +31,7 @@ export class Constraint {
      * @returns The ending minute.
      */
     get endMinute(): number {
-        return this.startMinute + this.duration
+        return this.startMinute + this.duration;
     }
 
     /**
@@ -47,6 +47,6 @@ export class Constraint {
             endMinute: this.endMinute,
             color: this.color,
             isFullDay: this.isFullDay,
-        }
+        };
     }
 }

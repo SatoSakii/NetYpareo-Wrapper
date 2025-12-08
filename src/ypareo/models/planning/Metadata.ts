@@ -20,6 +20,6 @@ export class Metadata {
             subjectCode: this.subjectCode,
             coefficient: this.coefficient,
             groupCodes: this.groupCodes,
-        }
+        };
     }
 }

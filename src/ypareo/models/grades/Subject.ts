@@ -1,5 +1,5 @@
-import { Grade } from './Grade'
-import { SubjectStats } from './SubjectStats'
+import { Grade } from './Grade';
+import { SubjectStats } from './SubjectStats';
 
 export class Subject {
     /**
@@ -23,7 +23,7 @@ export class Subject {
      * @return True if the subject has grades, false otherwise.
      */
     get hasGrades(): boolean {
-        return this.grades.length > 0
+        return this.grades.length > 0;
     }
 
     /**
@@ -33,7 +33,7 @@ export class Subject {
     get hasComment(): boolean {
         return (
             !!this.comment && this.comment !== 'Aucune appréciation renseignée.'
-        )
+        );
     }
 
     /**
@@ -44,11 +44,11 @@ export class Subject {
         return {
             code: this.code,
             name: this.name,
-            grades: this.grades.map((g) => g.toJSON()),
+            grades: this.grades.map(g => g.toJSON()),
             stats: this.stats.toJSON(),
             comment: this.comment,
             hasGrades: this.hasGrades,
             hasComment: this.hasComment,
-        }
+        };
     }
 }

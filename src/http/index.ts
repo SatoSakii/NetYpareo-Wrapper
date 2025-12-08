@@ -1,2 +1,2 @@
-export { HttpClient } from './HttpClient'
-export * from './types'
+export { HttpClient } from './HttpClient';
+export * from './types';

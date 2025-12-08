@@ -18,7 +18,7 @@ export class SubjectStats {
      * @return True if statistical data is available, false otherwise.
      */
     get hasData(): boolean {
-        return this.studentAverage !== null
+        return this.studentAverage !== null;
     }
 
     /**
@@ -32,6 +32,6 @@ export class SubjectStats {
             minAverage: this.minAverage,
             maxAverage: this.maxAverage,
             hasData: this.hasData,
-        }
+        };
     }
 }

@@ -1,4 +1,4 @@
-import { CookieJar } from '../cookies'
+import { CookieJar } from '../cookies';
 
 export type HttpMethod =
     | 'GET'
@@ -7,59 +7,60 @@ export type HttpMethod =
     | 'DELETE'
     | 'PATCH'
     | 'HEAD'
-    | 'OPTIONS'
+    | 'OPTIONS';
 
 export const HttpStatusCode = {
-	OK: 200,
-	NO_CONTENT: 204,
+    OK: 200,
+    NO_CONTENT: 204,
 
-	MULTIPLE_CHOICES: 300,
-	MOVED_PERMANENTLY: 301,
-	FOUND: 302,
-	SEE_OTHER: 303,
-	TEMPORARY_REDIRECT: 307,
-	PERMANENT_REDIRECT: 308,
+    MULTIPLE_CHOICES: 300,
+    MOVED_PERMANENTLY: 301,
+    FOUND: 302,
+    SEE_OTHER: 303,
+    TEMPORARY_REDIRECT: 307,
+    PERMANENT_REDIRECT: 308,
 
-	BAD_REQUEST: 400,
-	REQUEST_TIMEOUT: 408,
-	TOO_MANY_REQUESTS: 429,
+    BAD_REQUEST: 400,
+    REQUEST_TIMEOUT: 408,
+    TOO_MANY_REQUESTS: 429,
 
-	INTERNAL_SERVER_ERROR: 500,
-	BAD_GATEWAY: 502,
-	SERVICE_UNAVAILABLE: 503,
-	GATEWAY_TIMEOUT: 504
-}
+    INTERNAL_SERVER_ERROR: 500,
+    BAD_GATEWAY: 502,
+    SERVICE_UNAVAILABLE: 503,
+    GATEWAY_TIMEOUT: 504,
+};
 
-export type HttpStatusCode = (typeof HttpStatusCode)[keyof typeof HttpStatusCode]
+export type HttpStatusCode =
+    (typeof HttpStatusCode)[keyof typeof HttpStatusCode];
 
 export const REDIRECT_STATUS_CODES: HttpStatusCode[] = [
-	HttpStatusCode.MOVED_PERMANENTLY,
-	HttpStatusCode.FOUND,
-	HttpStatusCode.SEE_OTHER,
-	HttpStatusCode.TEMPORARY_REDIRECT,
-	HttpStatusCode.PERMANENT_REDIRECT
-]
+    HttpStatusCode.MOVED_PERMANENTLY,
+    HttpStatusCode.FOUND,
+    HttpStatusCode.SEE_OTHER,
+    HttpStatusCode.TEMPORARY_REDIRECT,
+    HttpStatusCode.PERMANENT_REDIRECT,
+];
 
 export const REDIRECT_TO_GET_STATUS_CODES: HttpStatusCode[] = [
-	HttpStatusCode.MOVED_PERMANENTLY,
-	HttpStatusCode.FOUND,
-	HttpStatusCode.SEE_OTHER
-]
+    HttpStatusCode.MOVED_PERMANENTLY,
+    HttpStatusCode.FOUND,
+    HttpStatusCode.SEE_OTHER,
+];
 
 export const DEFAULT_RETRY_STATUS_CODES: HttpStatusCode[] = [
-	HttpStatusCode.REQUEST_TIMEOUT,
-	HttpStatusCode.TOO_MANY_REQUESTS,
-	HttpStatusCode.INTERNAL_SERVER_ERROR,
-	HttpStatusCode.BAD_GATEWAY,
-	HttpStatusCode.SERVICE_UNAVAILABLE,
-	HttpStatusCode.GATEWAY_TIMEOUT
-]
+    HttpStatusCode.REQUEST_TIMEOUT,
+    HttpStatusCode.TOO_MANY_REQUESTS,
+    HttpStatusCode.INTERNAL_SERVER_ERROR,
+    HttpStatusCode.BAD_GATEWAY,
+    HttpStatusCode.SERVICE_UNAVAILABLE,
+    HttpStatusCode.GATEWAY_TIMEOUT,
+];
 
 export const HttpClientDefaults = {
-	TIMEOUT_MS: 30000,
-	MAX_REDIRECTS: 10,
-	MAX_RETRIES: 3
-}
+    TIMEOUT_MS: 30000,
+    MAX_REDIRECTS: 10,
+    MAX_RETRIES: 3,
+};
 
 export type RequestBody =
     | string
@@ -69,64 +70,64 @@ export type RequestBody =
     | ArrayBuffer
     | ReadableStream<Uint8Array>
     | Record<string, any>
-    | null
+    | null;
 
 export interface HttpClientOptions {
-    jar?: CookieJar
-    baseUrl?: string
-    userAgent?: string
-    followRedirects?: boolean
-    maxRedirects?: number
-    timeout?: number
-    headers?: Record<string, string>
-    retry?: Partial<RetryOptions>
-    validateStatus?: (status: number) => boolean
-    throwOnHttpError?: boolean
+    jar?: CookieJar;
+    baseUrl?: string;
+    userAgent?: string;
+    followRedirects?: boolean;
+    maxRedirects?: number;
+    timeout?: number;
+    headers?: Record<string, string>;
+    retry?: Partial<RetryOptions>;
+    validateStatus?: (status: number) => boolean;
+    throwOnHttpError?: boolean;
 }
 
 export interface RetryOptions {
-    enabled: boolean
-    maxRetries: number
-    retryDelay: (attempt: number) => number
-    retryOn: number[]
-    shouldRetry?: (error: unknown, attempt: number) => boolean
+    enabled: boolean;
+    maxRetries: number;
+    retryDelay: (attempt: number) => number;
+    retryOn: number[];
+    shouldRetry?: (error: unknown, attempt: number) => boolean;
 }
 
 export interface RequestOptions {
-    headers?: Record<string, string>
-    timeout?: number
-    followRedirects?: boolean
-    retry?: Partial<RetryOptions>
-    validateStatus?: (status: number) => boolean
-    responseType?: 'json' | 'text' | 'blob' | 'arrayBuffer' | 'stream'
+    headers?: Record<string, string>;
+    timeout?: number;
+    followRedirects?: boolean;
+    retry?: Partial<RetryOptions>;
+    validateStatus?: (status: number) => boolean;
+    responseType?: 'json' | 'text' | 'blob' | 'arrayBuffer' | 'stream';
 }
 
 export interface HttpResponse<T = any> {
-    status: number
-    statusText: string
-    headers: Headers
-    data: T
-    url: string
-    redirected: boolean
-    config: RequestConfig
+    status: number;
+    statusText: string;
+    headers: Headers;
+    data: T;
+    url: string;
+    redirected: boolean;
+    config: RequestConfig;
 }
 
 export interface RequestConfig {
-    method: HttpMethod
-    url: string
-    headers: Record<string, string>
-    body?: RequestBody
-    timeout: number
-    followRedirects: boolean
-    retry: RetryOptions
-    validateStatus: (status: number) => boolean
-    responseType: 'json' | 'text' | 'blob' | 'arrayBuffer' | 'stream'
-    throwOnHttpError: boolean
+    method: HttpMethod;
+    url: string;
+    headers: Record<string, string>;
+    body?: RequestBody;
+    timeout: number;
+    followRedirects: boolean;
+    retry: RetryOptions;
+    validateStatus: (status: number) => boolean;
+    responseType: 'json' | 'text' | 'blob' | 'arrayBuffer' | 'stream';
+    throwOnHttpError: boolean;
 }
 
 export class HttpError extends Error {
-    public readonly name = 'HttpError'
-    public readonly isHttpError = true
+    public readonly name = 'HttpError';
+    public readonly isHttpError = true;
 
     /**
      * Creates an instance of HttpError.
@@ -143,8 +144,8 @@ export class HttpError extends Error {
         public readonly response?: HttpResponse,
         public readonly config?: RequestConfig
     ) {
-        super(message)
-        Object.setPrototypeOf(this, HttpError.prototype)
+        super(message);
+        Object.setPrototypeOf(this, HttpError.prototype);
     }
 
     /**
@@ -153,8 +154,10 @@ export class HttpError extends Error {
      */
     isClientError(): boolean {
         return (
-            this.status !== undefined && this.status >= HttpStatusCode.BAD_REQUEST && this.status < HttpStatusCode.INTERNAL_SERVER_ERROR
-        )
+            this.status !== undefined &&
+            this.status >= HttpStatusCode.BAD_REQUEST &&
+            this.status < HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
     }
 
     /**
@@ -162,7 +165,10 @@ export class HttpError extends Error {
      * @returns True if the error is a server error, false otherwise.
      */
     isServerError(): boolean {
-        return this.status !== undefined && this.status >= HttpStatusCode.INTERNAL_SERVER_ERROR
+        return (
+            this.status !== undefined &&
+            this.status >= HttpStatusCode.INTERNAL_SERVER_ERROR
+        );
     }
 
     /**
@@ -171,8 +177,8 @@ export class HttpError extends Error {
      */
     toString(): string {
         if (this.status)
-            return `HttpError: ${this.message} (${this.status} ${this.statusText || ''})`
-        return `HttpError: ${this.message}`
+            return `HttpError: ${this.message} (${this.status} ${this.statusText || ''})`;
+        return `HttpError: ${this.message}`;
     }
 }
 
@@ -182,5 +188,5 @@ export class HttpError extends Error {
  * @returns True if the error is an HttpError, false otherwise.
  */
 export function isHttpError(error: HttpError): error is HttpError {
-    return error && error.isHttpError === true
+    return error && error.isHttpError === true;
 }

@@ -1,10 +1,10 @@
-export { Configuration } from './Configuration'
-export { Constraint } from './Constraint'
-export { Icon } from './Icon'
-export { Metadata } from './Metadata'
-export { Planning } from './Planning'
-export { Resource } from './Resource'
-export { Session } from './Session'
+export { Configuration } from './Configuration';
+export { Constraint } from './Constraint';
+export { Icon } from './Icon';
+export { Metadata } from './Metadata';
+export { Planning } from './Planning';
+export { Resource } from './Resource';
+export { Session } from './Session';
 export type {
     DayNumber,
     ExportMode,
@@ -13,5 +13,5 @@ export type {
     SessionType,
     TimeString,
     WeekCode,
-} from './types'
-export { Week } from './Week'
+} from './types';
+export { Week } from './Week';

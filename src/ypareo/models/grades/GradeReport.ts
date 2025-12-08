@@ -1,4 +1,4 @@
-import { Subject } from './Subject'
+import { Subject } from './Subject';
 
 export class GradeReport {
     /**
@@ -19,7 +19,7 @@ export class GradeReport {
      * @return The Subject instance if found, undefined otherwise.
      */
     getSubject(code: number): Subject | undefined {
-        return this.subjects.find((s) => s.code === code)
+        return this.subjects.find(s => s.code === code);
     }
 
     /**
@@ -28,14 +28,14 @@ export class GradeReport {
      */
     get overallAverage(): number | null {
         const averages = this.subjects
-            .map((s) => s.stats.studentAverage)
-            .filter((avg): avg is number => avg !== null)
+            .map(s => s.stats.studentAverage)
+            .filter((avg): avg is number => avg !== null);
 
-        if (averages.length === 0) return null
+        if (averages.length === 0) return null;
 
-        const sum = averages.reduce((acc, avg) => acc + avg, 0)
+        const sum = averages.reduce((acc, avg) => acc + avg, 0);
 
-        return Math.round((sum / averages.length) * 100) / 100
+        return Math.round((sum / averages.length) * 100) / 100;
     }
 
     /**
@@ -44,11 +44,11 @@ export class GradeReport {
      */
     toJSON(): Record<string, any> {
         return {
-            subjects: this.subjects.map((s) => s.toJSON()),
+            subjects: this.subjects.map(s => s.toJSON()),
             periodName: this.periodName,
             registrationName: this.registrationName,
             totalSubjects: this.subjects.length,
             overallAverage: this.overallAverage,
-        }
+        };
     }
 }

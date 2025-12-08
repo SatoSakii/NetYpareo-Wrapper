@@ -8,9 +8,10 @@ export function bufferToHtml(
     data: any,
     encoding: BufferEncoding = 'latin1'
 ): string {
-    if (Buffer.isBuffer(data)) return data.toString(encoding)
-    if (data instanceof ArrayBuffer) return Buffer.from(data).toString(encoding)
-    if (typeof data === 'string') return data
+    if (Buffer.isBuffer(data)) return data.toString(encoding);
+    if (data instanceof ArrayBuffer)
+        return Buffer.from(data).toString(encoding);
+    if (typeof data === 'string') return data;
 
-    throw new TypeError('Data must be a Buffer, ArrayBuffer, or string')
+    throw new TypeError('Data must be a Buffer, ArrayBuffer, or string');
 }

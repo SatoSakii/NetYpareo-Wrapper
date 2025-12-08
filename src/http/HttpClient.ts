@@ -1,31 +1,31 @@
-import { CookieJar } from '../cookies'
-import { DEFAULTS_HEADERS } from '../ypareo'
+import { CookieJar } from '../cookies';
+import { DEFAULTS_HEADERS } from '../ypareo';
 import {
+    DEFAULT_RETRY_STATUS_CODES,
+    HttpClientDefaults,
     HttpClientOptions,
     HttpError,
     HttpMethod,
     HttpResponse,
+    HttpStatusCode,
+    REDIRECT_STATUS_CODES,
+    REDIRECT_TO_GET_STATUS_CODES,
     RequestBody,
     RequestConfig,
     RequestOptions,
     RetryOptions,
-	HttpStatusCode,
-	HttpClientDefaults,
-	REDIRECT_STATUS_CODES,
-	REDIRECT_TO_GET_STATUS_CODES,
-	DEFAULT_RETRY_STATUS_CODES
-} from './types'
+} from './types';
 
 export class HttpClient {
-    private jar: CookieJar
-    private baseUrl: string
-    private followRedirects: boolean
-    private maxRedirects: number
-    private timeout: number
-    private defaultHeaders: Record<string, string>
-    private retry: RetryOptions
-    private validateStatus: (status: number) => boolean
-    private throwOnHttpError: boolean
+    private jar: CookieJar;
+    private baseUrl: string;
+    private followRedirects: boolean;
+    private maxRedirects: number;
+    private timeout: number;
+    private defaultHeaders: Record<string, string>;
+    private retry: RetryOptions;
+    private validateStatus: (status: number) => boolean;
+    private throwOnHttpError: boolean;
 
     /**
      * Build retry options by merging user options with defaults.
@@ -33,17 +33,20 @@ export class HttpClient {
      * @returns Merged retry options.
      */
     constructor(options: HttpClientOptions = {}) {
-        this.jar = options.jar || new CookieJar()
-        this.baseUrl = options.baseUrl?.replace(/\/+$/, '') || ''
-        this.followRedirects = options.followRedirects !== false
-        this.maxRedirects = options.maxRedirects || HttpClientDefaults.MAX_REDIRECTS
-        this.timeout = options.timeout || HttpClientDefaults.TIMEOUT_MS
-        this.defaultHeaders = options.headers || {}
-        this.retry = this.buildRetryOptions(options.retry)
+        this.jar = options.jar || new CookieJar();
+        this.baseUrl = options.baseUrl?.replace(/\/+$/, '') || '';
+        this.followRedirects = options.followRedirects !== false;
+        this.maxRedirects =
+            options.maxRedirects || HttpClientDefaults.MAX_REDIRECTS;
+        this.timeout = options.timeout || HttpClientDefaults.TIMEOUT_MS;
+        this.defaultHeaders = options.headers || {};
+        this.retry = this.buildRetryOptions(options.retry);
         this.validateStatus =
             options.validateStatus ||
-            ((status) => status >= HttpStatusCode.OK && status < HttpStatusCode.MULTIPLE_CHOICES)
-        this.throwOnHttpError = options.throwOnHttpError !== false
+            (status =>
+                status >= HttpStatusCode.OK &&
+                status < HttpStatusCode.MULTIPLE_CHOICES);
+        this.throwOnHttpError = options.throwOnHttpError !== false;
     }
 
     /**
@@ -56,7 +59,7 @@ export class HttpClient {
         path: string,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('GET', path, null, options)
+        return this.request<T>('GET', path, null, options);
     }
 
     /**
@@ -71,7 +74,7 @@ export class HttpClient {
         body?: RequestBody,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('POST', path, body, options)
+        return this.request<T>('POST', path, body, options);
     }
 
     /**
@@ -86,7 +89,7 @@ export class HttpClient {
         body?: RequestBody,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('PUT', path, body, options)
+        return this.request<T>('PUT', path, body, options);
     }
 
     /**
@@ -101,7 +104,7 @@ export class HttpClient {
         body?: RequestBody,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('DELETE', path, body, options)
+        return this.request<T>('DELETE', path, body, options);
     }
 
     /**
@@ -116,7 +119,7 @@ export class HttpClient {
         body?: RequestBody,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('PATCH', path, body, options)
+        return this.request<T>('PATCH', path, body, options);
     }
 
     /**
@@ -129,7 +132,7 @@ export class HttpClient {
         path: string,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('HEAD', path, null, options)
+        return this.request<T>('HEAD', path, null, options);
     }
 
     /**
@@ -142,7 +145,7 @@ export class HttpClient {
         path: string,
         options?: RequestOptions
     ): Promise<HttpResponse<T>> {
-        return this.request<T>('OPTIONS', path, null, options)
+        return this.request<T>('OPTIONS', path, null, options);
     }
 
     /**
@@ -159,32 +162,35 @@ export class HttpClient {
         body?: RequestBody,
         options: RequestOptions = {}
     ): Promise<HttpResponse<T>> {
-        const url = this.buildUrl(path)
-        const retryOptions: RetryOptions = this.mergeRetryOptions(options.retry)
+        const url = this.buildUrl(path);
+        const retryOptions: RetryOptions = this.mergeRetryOptions(
+            options.retry
+        );
 
         const executeWithRetry = async (
             attempt: number = 0
         ): Promise<HttpResponse<T>> => {
             try {
-                return await this.executeRequest<T>(method, url, body, options)
+                return await this.executeRequest<T>(method, url, body, options);
             } catch (error: unknown) {
                 const canRetry =
-                    retryOptions.enabled && attempt < retryOptions.maxRetries
-                const shouldRetry = retryOptions.shouldRetry
-                    ? retryOptions.shouldRetry(error, attempt)
-                    : this.shouldRetryError(error, retryOptions)
+                    retryOptions.enabled && attempt < retryOptions.maxRetries;
+                const shouldRetry =
+                    retryOptions.shouldRetry ?
+                        retryOptions.shouldRetry(error, attempt)
+                    :   this.shouldRetryError(error, retryOptions);
 
                 if (canRetry && shouldRetry) {
-                    const delay = retryOptions.retryDelay(attempt)
+                    const delay = retryOptions.retryDelay(attempt);
 
-                    await this.sleep(delay)
-                    return executeWithRetry(attempt + 1)
+                    await this.sleep(delay);
+                    return executeWithRetry(attempt + 1);
                 }
-                throw error
+                throw error;
             }
-        }
+        };
 
-        return executeWithRetry()
+        return executeWithRetry();
     }
 
     /**
@@ -203,17 +209,17 @@ export class HttpClient {
         options: RequestOptions,
         redirectCount: number = 0
     ): Promise<HttpResponse<T>> {
-        const shouldFollow = options.followRedirects ?? this.followRedirects
+        const shouldFollow = options.followRedirects ?? this.followRedirects;
 
         if (shouldFollow && redirectCount > this.maxRedirects)
-            throw new Error(`Max redirects exceeded: ${this.maxRedirects}`)
+            throw new Error(`Max redirects exceeded: ${this.maxRedirects}`);
 
-        const config = this.buildRequestConfig(method, url, body, options)
-        const headers = this.buildHeaders(url, method, body, options.headers)
-        const { fetchBody, finalHeaders } = this.prepareBody(body, headers)
+        const config = this.buildRequestConfig(method, url, body, options);
+        const headers = this.buildHeaders(url, method, body, options.headers);
+        const { fetchBody, finalHeaders } = this.prepareBody(body, headers);
 
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), config.timeout)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), config.timeout);
 
         try {
             const response = await fetch(url, {
@@ -228,29 +234,29 @@ export class HttpClient {
                     | undefined,
                 redirect: 'manual',
                 signal: controller.signal,
-            })
+            });
 
-            clearTimeout(timeoutId)
-            this.extractCookies(response, url)
+            clearTimeout(timeoutId);
+            this.extractCookies(response, url);
 
             if (shouldFollow && this.isRedirect(response.status)) {
-                const location = response.headers.get('location')
+                const location = response.headers.get('location');
 
                 if (!location)
                     throw new HttpError(
                         'Redirect location header missing',
                         response.status,
                         response.statusText
-                    )
+                    );
 
-                const redirectUrl = this.resolveUrl(url, location)
+                const redirectUrl = this.resolveUrl(url, location);
 
-                let redirectMethod: HttpMethod = method
-                let redirectBody: RequestBody | undefined = body
+                let redirectMethod: HttpMethod = method;
+                let redirectBody: RequestBody | undefined = body;
 
                 if (REDIRECT_TO_GET_STATUS_CODES.includes(response.status)) {
-                    redirectMethod = 'GET'
-                    redirectBody = null
+                    redirectMethod = 'GET';
+                    redirectBody = null;
                 }
 
                 return this.executeRequest<T>(
@@ -259,14 +265,14 @@ export class HttpClient {
                     redirectBody,
                     options,
                     redirectCount + 1
-                )
+                );
             }
 
-            const responseType = options.responseType || 'text'
+            const responseType = options.responseType || 'text';
             const responseData = await this.parseResponse<T>(
                 response,
                 responseType
-            )
+            );
 
             const httpResponse: HttpResponse<T> = {
                 status: response.status,
@@ -276,9 +282,9 @@ export class HttpClient {
                 url: response.url || url,
                 redirected: redirectCount > 0,
                 config,
-            }
+            };
 
-            const validateFn = options.validateStatus || this.validateStatus
+            const validateFn = options.validateStatus || this.validateStatus;
 
             if (!validateFn(response.status) && config.throwOnHttpError) {
                 throw new HttpError(
@@ -287,12 +293,12 @@ export class HttpClient {
                     response.statusText,
                     httpResponse,
                     config
-                )
+                );
             }
 
-            return httpResponse
+            return httpResponse;
         } catch (error: unknown) {
-            clearTimeout(timeoutId)
+            clearTimeout(timeoutId);
 
             if (this.isAbortError(error))
                 throw new HttpError(
@@ -301,8 +307,8 @@ export class HttpClient {
                     undefined,
                     undefined,
                     config
-                )
-            if (error instanceof HttpError) throw error
+                );
+            if (error instanceof HttpError) throw error;
             if (error instanceof Error) {
                 throw new HttpError(
                     `Network error: ${error.message}`,
@@ -310,7 +316,7 @@ export class HttpClient {
                     undefined,
                     undefined,
                     config
-                )
+                );
             }
             throw new HttpError(
                 `Network error: ${String(error)}`,
@@ -318,7 +324,7 @@ export class HttpClient {
                 undefined,
                 undefined,
                 config
-            )
+            );
         }
     }
 
@@ -334,7 +340,7 @@ export class HttpClient {
             'name' in error &&
             typeof error.name === 'string' &&
             error.name === 'AbortError'
-        )
+        );
     }
 
     /**
@@ -343,9 +349,9 @@ export class HttpClient {
      * @returns Full URL.
      */
     private buildUrl(path: string): string {
-        if (/^https?:\/\//i.test(path)) return path
-        if (!this.baseUrl) return path
-        return `${this.baseUrl}${path.startsWith('/') ? path : '/' + path}`
+        if (/^https?:\/\//i.test(path)) return path;
+        if (!this.baseUrl) return path;
+        return `${this.baseUrl}${path.startsWith('/') ? path : '/' + path}`;
     }
 
     /**
@@ -373,7 +379,7 @@ export class HttpClient {
             validateStatus: options.validateStatus || this.validateStatus,
             responseType: options.responseType || 'text',
             throwOnHttpError: this.throwOnHttpError,
-        }
+        };
     }
 
     /**
@@ -394,15 +400,15 @@ export class HttpClient {
             ...DEFAULTS_HEADERS,
             ...this.defaultHeaders,
             ...customHeaders,
-        }
+        };
 
-        const cookieHeader = this.jar.getCookieString(url)
-        if (cookieHeader) headers['Cookie'] = cookieHeader
+        const cookieHeader = this.jar.getCookieString(url);
+        if (cookieHeader) headers['Cookie'] = cookieHeader;
 
         if (this.baseUrl && !headers['Referer'])
-            headers['Referer'] = this.baseUrl
+            headers['Referer'] = this.baseUrl;
 
-        return headers
+        return headers;
     }
 
     /**
@@ -421,46 +427,46 @@ export class HttpClient {
             | Blob
             | ArrayBuffer
             | ReadableStream
-            | undefined
-        finalHeaders: Record<string, string>
+            | undefined;
+        finalHeaders: Record<string, string>;
     } {
         if (!body || body === null)
-            return { fetchBody: undefined, finalHeaders: headers }
+            return { fetchBody: undefined, finalHeaders: headers };
 
-        const finalHeaders = { ...headers }
+        const finalHeaders = { ...headers };
 
         if (body instanceof FormData) {
-            delete finalHeaders['Content-Type']
-            return { fetchBody: body, finalHeaders }
+            delete finalHeaders['Content-Type'];
+            return { fetchBody: body, finalHeaders };
         }
         if (body instanceof Blob) {
             if (!finalHeaders['Content-Type'])
                 finalHeaders['Content-Type'] =
-                    body.type || 'application/octet-stream'
-            return { fetchBody: body, finalHeaders }
+                    body.type || 'application/octet-stream';
+            return { fetchBody: body, finalHeaders };
         }
         if (body instanceof ArrayBuffer || body instanceof ReadableStream) {
             if (!finalHeaders['Content-Type'])
-                finalHeaders['Content-Type'] = 'application/octet-stream'
-            return { fetchBody: body, finalHeaders }
+                finalHeaders['Content-Type'] = 'application/octet-stream';
+            return { fetchBody: body, finalHeaders };
         }
         if (body instanceof URLSearchParams) {
             if (!finalHeaders['Content-Type'])
                 finalHeaders['Content-Type'] =
-                    'application/x-www-form-urlencoded;charset=UTF-8'
-            return { fetchBody: body.toString(), finalHeaders }
+                    'application/x-www-form-urlencoded;charset=UTF-8';
+            return { fetchBody: body.toString(), finalHeaders };
         }
         if (typeof body === 'string') {
             if (!finalHeaders['Content-Type'])
-                finalHeaders['Content-Type'] = 'text/plain;charset=UTF-8'
-            return { fetchBody: body, finalHeaders }
+                finalHeaders['Content-Type'] = 'text/plain;charset=UTF-8';
+            return { fetchBody: body, finalHeaders };
         }
         if (typeof body === 'object') {
             if (!finalHeaders['Content-Type'])
-                finalHeaders['Content-Type'] = 'application/json;charset=UTF-8'
-            return { fetchBody: JSON.stringify(body), finalHeaders }
+                finalHeaders['Content-Type'] = 'application/json;charset=UTF-8';
+            return { fetchBody: JSON.stringify(body), finalHeaders };
         }
-        return { fetchBody: undefined, finalHeaders }
+        return { fetchBody: undefined, finalHeaders };
     }
 
     /**
@@ -477,24 +483,24 @@ export class HttpClient {
             response.status === HttpStatusCode.NO_CONTENT ||
             response.headers.get('Content-Length') === '0'
         )
-            return null as T
+            return null as T;
 
         switch (type) {
             case 'json':
                 try {
-                    return (await response.json()) as T
+                    return (await response.json()) as T;
                 } catch {
-                    return null as T
+                    return null as T;
                 }
             case 'blob':
-                return (await response.blob()) as T
+                return (await response.blob()) as T;
             case 'arrayBuffer':
-                return (await response.arrayBuffer()) as T
+                return (await response.arrayBuffer()) as T;
             case 'stream':
-                return response.body as T
+                return response.body as T;
             case 'text':
             default:
-                return (await response.text()) as T
+                return (await response.text()) as T;
         }
     }
 
@@ -504,21 +510,21 @@ export class HttpClient {
      * @param requestUrl Request URL.
      */
     private extractCookies(response: Response, requestUrl: string): void {
-        const setCookieHeaders = response.headers.get('set-cookie')
+        const setCookieHeaders = response.headers.get('set-cookie');
 
-        if (!setCookieHeaders) return
-        const cookies = setCookieHeaders.split(/,(?=\s*\w+=)/)
+        if (!setCookieHeaders) return;
+        const cookies = setCookieHeaders.split(/,(?=\s*\w+=)/);
 
-        const validCookies: string[] = cookies.filter((cookieStr) => {
-            const trimmed = cookieStr.trim().toLowerCase()
+        const validCookies: string[] = cookies.filter(cookieStr => {
+            const trimmed = cookieStr.trim().toLowerCase();
             return (
                 !trimmed.includes('=deleted;') && !trimmed.includes('=deleted ')
-            )
-        })
+            );
+        });
 
         for (const cookieString of validCookies) {
-            const trimmed = cookieString.trim()
-            if (trimmed) this.jar.setCookie(trimmed, requestUrl)
+            const trimmed = cookieString.trim();
+            if (trimmed) this.jar.setCookie(trimmed, requestUrl);
         }
     }
 
@@ -528,7 +534,7 @@ export class HttpClient {
      * @returns Whether the status code is a redirect.
      */
     private isRedirect(status: number): boolean {
-        return REDIRECT_STATUS_CODES.includes(status)
+        return REDIRECT_STATUS_CODES.includes(status);
     }
 
     /**
@@ -539,9 +545,9 @@ export class HttpClient {
      */
     private resolveUrl(base: string, relative: string): string {
         try {
-            return new URL(relative, base).toString()
+            return new URL(relative, base).toString();
         } catch {
-            return relative
+            return relative;
         }
     }
 
@@ -555,11 +561,10 @@ export class HttpClient {
             enabled: options?.enabled || false,
             maxRetries: options?.maxRetries ?? HttpClientDefaults.MAX_RETRIES,
             retryDelay:
-                options?.retryDelay ||
-                ((attempt) => Math.pow(2, attempt) * 1000),
+                options?.retryDelay || (attempt => Math.pow(2, attempt) * 1000),
             retryOn: options?.retryOn || DEFAULT_RETRY_STATUS_CODES,
             shouldRetry: options?.shouldRetry,
-        }
+        };
     }
 
     /**
@@ -568,14 +573,14 @@ export class HttpClient {
      * @returns Merged retry options.
      */
     private mergeRetryOptions(options?: Partial<RetryOptions>): RetryOptions {
-        if (!options) return this.retry
+        if (!options) return this.retry;
         return {
             enabled: options.enabled ?? this.retry.enabled,
             maxRetries: options.maxRetries ?? this.retry.maxRetries,
             retryDelay: options.retryDelay ?? this.retry.retryDelay,
             retryOn: options.retryOn ?? this.retry.retryOn,
             shouldRetry: options.shouldRetry ?? this.retry.shouldRetry,
-        }
+        };
     }
 
     /**
@@ -589,22 +594,22 @@ export class HttpClient {
         retryOptions: RetryOptions
     ): boolean {
         if (error instanceof HttpError && error.status)
-            return retryOptions.retryOn.includes(error.status)
-        let msg: string | undefined = undefined
-        if (error instanceof Error) msg = error.message.toLowerCase()
+            return retryOptions.retryOn.includes(error.status);
+        let msg: string | undefined = undefined;
+        if (error instanceof Error) msg = error.message.toLowerCase();
         else if (
             typeof error === 'object' &&
             error !== null &&
             'message' in error &&
             typeof (error as { message: unknown }).message === 'string'
         )
-            msg = (error as { message: string }).message.toLowerCase()
-        if (!msg) return false
+            msg = (error as { message: string }).message.toLowerCase();
+        if (!msg) return false;
         return (
             msg.includes('timeout') ||
             msg.includes('network') ||
             msg.includes('fetch')
-        )
+        );
     }
 
     /**
@@ -613,7 +618,7 @@ export class HttpClient {
      * @returns Promise that resolves after the duration.
      */
     private sleep(ms: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, ms))
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     /**
@@ -621,7 +626,7 @@ export class HttpClient {
      * @returns The cookie jar.
      */
     getJar(): CookieJar {
-        return this.jar
+        return this.jar;
     }
 
     /**
@@ -629,7 +634,7 @@ export class HttpClient {
      * @param jar The cookie jar to set.
      */
     setJar(jar: CookieJar): void {
-        this.jar = jar
+        this.jar = jar;
     }
 
     /**
@@ -637,7 +642,7 @@ export class HttpClient {
      * @returns The base URL.
      */
     getBaseUrl(): string {
-        return this.baseUrl
+        return this.baseUrl;
     }
 
     /**
@@ -645,7 +650,7 @@ export class HttpClient {
      * @param baseUrl The base URL to set.
      */
     setBaseUrl(baseUrl: string): void {
-        this.baseUrl = baseUrl.replace(/\/+$/, '')
+        this.baseUrl = baseUrl.replace(/\/+$/, '');
     }
 
     /**
@@ -654,7 +659,7 @@ export class HttpClient {
      * @param value Header value.
      */
     setDefaultHeader(key: string, value: string): void {
-        this.defaultHeaders[key] = value
+        this.defaultHeaders[key] = value;
     }
 
     /**
@@ -662,7 +667,7 @@ export class HttpClient {
      * @param key Header name.
      */
     removeDefaultHeader(key: string): void {
-        delete this.defaultHeaders[key]
+        delete this.defaultHeaders[key];
     }
 
     /**
@@ -670,7 +675,7 @@ export class HttpClient {
      * @returns Default headers.
      */
     getDefaultHeaders(): Record<string, string> {
-        return { ...this.defaultHeaders }
+        return { ...this.defaultHeaders };
     }
 
     /**
@@ -678,7 +683,7 @@ export class HttpClient {
      * @param timeout Timeout in milliseconds.
      */
     setTimeout(timeout: number): void {
-        this.timeout = timeout
+        this.timeout = timeout;
     }
 
     /**
@@ -686,6 +691,6 @@ export class HttpClient {
      * @returns Timeout in milliseconds.
      */
     getTimeout(): number {
-        return this.timeout
+        return this.timeout;
     }
 }

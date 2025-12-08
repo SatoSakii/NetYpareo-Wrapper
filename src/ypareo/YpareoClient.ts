@@ -1,31 +1,31 @@
-import { AuthManager } from './core/auth/AuthManager'
-import { BaseClient } from './core/BaseClient'
-import { EventManager } from './core/EventManager'
-import { AttendanceManager, GradesManager, PlanningManager } from './managers'
-import type { User } from './models'
-import type { YpareoClientConfig, YpareoClientEvents } from './types'
+import { AuthManager } from './core/auth/AuthManager';
+import { BaseClient } from './core/BaseClient';
+import { EventManager } from './core/EventManager';
+import { AttendanceManager, GradesManager, PlanningManager } from './managers';
+import type { User } from './models';
+import type { YpareoClientConfig, YpareoClientEvents } from './types';
 
 export class YpareoClient extends BaseClient {
-    private events: EventManager
-    private auth: AuthManager
-    public user: User | null = null
-    public readonly planning: PlanningManager
-    public readonly attendance: AttendanceManager
-    public readonly grades: GradesManager
+    private events: EventManager;
+    private auth: AuthManager;
+    public user: User | null = null;
+    public readonly planning: PlanningManager;
+    public readonly attendance: AttendanceManager;
+    public readonly grades: GradesManager;
     public readonly session: {
         /**
          * Save the current session state to a string.
          * @returns The serialized session data.
          */
-        save(): string
+        save(): string;
         /**
          * Restore a session from serialized data.
          * @param sessionData The serialized session data.
          * @param autoRelogin Whether to automatically relogin if the session is expired. Default is true.
          * @returns A promise that resolves to the restored User.
          */
-        restore(sessionData: string, autoRelogin?: boolean): Promise<User>
-    }
+        restore(sessionData: string, autoRelogin?: boolean): Promise<User>;
+    };
 
     /**
      * Creates a new YpareoClient instance.
@@ -33,9 +33,9 @@ export class YpareoClient extends BaseClient {
      * @returns A new instance of YpareoClient.
      */
     constructor(config: YpareoClientConfig) {
-        super(config)
+        super(config);
 
-        this.events = new EventManager()
+        this.events = new EventManager();
         this.auth = new AuthManager(
             this.http,
             this.sessions,
@@ -43,37 +43,37 @@ export class YpareoClient extends BaseClient {
             this.urls,
             config.username,
             config.password
-        )
+        );
 
-        this.planning = new PlanningManager(this.http)
-        this.attendance = new AttendanceManager(this.http)
-        this.grades = new GradesManager(this.http)
+        this.planning = new PlanningManager(this.http);
+        this.attendance = new AttendanceManager(this.http);
+        this.grades = new GradesManager(this.http);
 
         this.session = {
             save: (): string => {
                 if (!this.auth.isConnected())
-                    throw new Error('No active session to save')
-                return this.sessions.serialize()
+                    throw new Error('No active session to save');
+                return this.sessions.serialize();
             },
             restore: (
                 sessionData: string,
                 autoRelogin = true
             ): Promise<User> => {
-                return this.auth.restoreSession(sessionData, autoRelogin)
+                return this.auth.restoreSession(sessionData, autoRelogin);
             },
-        }
+        };
 
-        this.on('login', (user) => {
-            this.user = user
-        })
+        this.on('login', user => {
+            this.user = user;
+        });
 
-        this.on('sessionRestored', (user) => {
-            this.user = user
-        })
+        this.on('sessionRestored', user => {
+            this.user = user;
+        });
 
         this.on('logout', () => {
-            this.user = null
-        })
+            this.user = null;
+        });
     }
 
     /**
@@ -86,8 +86,8 @@ export class YpareoClient extends BaseClient {
         event: K,
         listener: (...args: YpareoClientEvents[K]) => void
     ): this {
-        this.events.on(event, listener)
-        return this
+        this.events.on(event, listener);
+        return this;
     }
 
     /**
@@ -100,8 +100,8 @@ export class YpareoClient extends BaseClient {
         event: K,
         listener: (...args: YpareoClientEvents[K]) => void
     ): this {
-        this.events.once(event, listener)
-        return this
+        this.events.once(event, listener);
+        return this;
     }
 
     /**
@@ -114,34 +114,34 @@ export class YpareoClient extends BaseClient {
         event: K,
         listener: (...args: YpareoClientEvents[K]) => void
     ): this {
-        this.events.off(event, listener)
-        return this
+        this.events.off(event, listener);
+        return this;
     }
 
     /**
      * Logs in the user with the provided credentials.
      */
     login(): void {
-        this.auth.login().catch(() => {})
+        this.auth.login().catch(() => {});
     }
 
     /**
      * Logs out the current user and resets the session.
      */
     logout(): void {
-        this.auth.logout().catch(() => {})
-        this.sessions.reset()
-        this.events.emit('logout')
+        this.auth.logout().catch(() => {});
+        this.sessions.reset();
+        this.events.emit('logout');
     }
 
     /**
      * Clears the stored password from the AuthManager.
      */
     protected clearPassword(): void {
-        this.auth.clearPassword()
+        this.auth.clearPassword();
     }
 
     public get httpClient() {
-        return this.http
+        return this.http;
     }
 }

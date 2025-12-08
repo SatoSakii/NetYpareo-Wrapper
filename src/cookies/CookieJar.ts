@@ -1,8 +1,8 @@
-import { Cookie } from './Cookie'
-import { SerializedCookie } from './types'
+import { Cookie } from './Cookie';
+import { SerializedCookie } from './types';
 
 export class CookieJar {
-    private cookies: Map<string, Cookie> = new Map()
+    private cookies: Map<string, Cookie> = new Map();
 
     /**
      * Adds a cookie to the jar.
@@ -10,20 +10,20 @@ export class CookieJar {
      * @param requestUrl The URL of the request that received the cookie (needed for parsing).
      */
     setCookie(cookie: Cookie | string, requestUrl: string): void {
-        let cookieObj: Cookie | null
+        let cookieObj: Cookie | null;
 
         if (typeof cookie === 'string')
-            cookieObj = Cookie.parse(cookie, requestUrl)
-        else cookieObj = cookie
-        if (!cookieObj) return
+            cookieObj = Cookie.parse(cookie, requestUrl);
+        else cookieObj = cookie;
+        if (!cookieObj) return;
 
-        const id = this.getCookieId(cookieObj)
+        const id = this.getCookieId(cookieObj);
 
         if (cookieObj.isExpired()) {
-            this.cookies.delete(id)
-            return
+            this.cookies.delete(id);
+            return;
         }
-        this.cookies.set(id, cookieObj)
+        this.cookies.set(id, cookieObj);
     }
 
     /**
@@ -32,17 +32,17 @@ export class CookieJar {
      * @returns An array of matching Cookie instances.
      */
     getCookies(requestUrl: string): Cookie[] {
-        this.removeExpiredCookies()
+        this.removeExpiredCookies();
 
-        const matching: Cookie[] = []
+        const matching: Cookie[] = [];
 
         for (const cookie of this.cookies.values()) {
             if (cookie.matches(requestUrl)) {
-                cookie.lastAccessed = new Date()
-                matching.push(cookie)
+                cookie.lastAccessed = new Date();
+                matching.push(cookie);
             }
         }
-        return matching
+        return matching;
     }
 
     /**
@@ -51,15 +51,15 @@ export class CookieJar {
      * @returns A string of cookies formatted for HTTP headers.
      */
     getCookieString(requestUrl: string): string {
-        const cookies = this.getCookies(requestUrl)
-        return cookies.map((c) => c.toString()).join('; ')
+        const cookies = this.getCookies(requestUrl);
+        return cookies.map(c => c.toString()).join('; ');
     }
 
     /**
      * Clears all cookies from the jar.
      */
     clear(): void {
-        this.cookies.clear()
+        this.cookies.clear();
     }
 
     /**
@@ -67,7 +67,7 @@ export class CookieJar {
      */
     private removeExpiredCookies(): void {
         for (const [id, cookie] of this.cookies.entries()) {
-            if (cookie.isExpired()) this.cookies.delete(id)
+            if (cookie.isExpired()) this.cookies.delete(id);
         }
     }
 
@@ -77,10 +77,10 @@ export class CookieJar {
      * @returns A unique string identifier for the cookie.
      */
     private getCookieId(cookie: Cookie): string {
-        const domain = cookie.domain || ''
-        const path = cookie.path || '/'
+        const domain = cookie.domain || '';
+        const path = cookie.path || '/';
 
-        return `${domain}|${path}|${cookie.key}`
+        return `${domain}|${path}|${cookie.key}`;
     }
 
     /**
@@ -88,14 +88,14 @@ export class CookieJar {
      * @returns The serialized cookie jar.
      */
     serialize(): string {
-        this.removeExpiredCookies()
+        this.removeExpiredCookies();
 
-        const serializedCookies: SerializedCookie[] = []
+        const serializedCookies: SerializedCookie[] = [];
 
         for (const cookie of this.cookies.values())
-            serializedCookies.push(cookie.serialize())
+            serializedCookies.push(cookie.serialize());
 
-        return JSON.stringify(serializedCookies, null, 2)
+        return JSON.stringify(serializedCookies, null, 2);
     }
 
     /**
@@ -104,22 +104,22 @@ export class CookieJar {
      * @returns A CookieJar instance.
      */
     static deserialize(data: string): CookieJar {
-        const jar = new CookieJar()
+        const jar = new CookieJar();
 
         try {
-            const serialized: SerializedCookie[] = JSON.parse(data)
+            const serialized: SerializedCookie[] = JSON.parse(data);
 
             for (const cookieData of serialized) {
-                const cookie = Cookie.deserialize(cookieData)
+                const cookie = Cookie.deserialize(cookieData);
 
                 if (!cookie.isExpired()) {
-                    const id = jar.getCookieId(cookie)
-                    jar.cookies.set(id, cookie)
+                    const id = jar.getCookieId(cookie);
+                    jar.cookies.set(id, cookie);
                 }
             }
         } catch {}
 
-        return jar
+        return jar;
     }
 
     /**
@@ -127,8 +127,8 @@ export class CookieJar {
      * @returns An array of all Cookie instances.
      */
     getAllCookies(): Cookie[] {
-        this.removeExpiredCookies()
-        return Array.from(this.cookies.values())
+        this.removeExpiredCookies();
+        return Array.from(this.cookies.values());
     }
 
     /**
@@ -136,8 +136,8 @@ export class CookieJar {
      * @returns The count of cookies.
      */
     size(): number {
-        this.removeExpiredCookies()
-        return this.cookies.size
+        this.removeExpiredCookies();
+        return this.cookies.size;
     }
 
     /**
@@ -145,8 +145,8 @@ export class CookieJar {
      * @param cookie The Cookie instance to remove.
      */
     removeCookie(cookie: Cookie): void {
-        const id = this.getCookieId(cookie)
-        this.cookies.delete(id)
+        const id = this.getCookieId(cookie);
+        this.cookies.delete(id);
     }
 
     /**
@@ -156,8 +156,8 @@ export class CookieJar {
      * @param path The cookie path (optional).
      */
     removeCookieByKey(key: string, domain?: string, path?: string): void {
-        const id = `${domain || ''}|${path || '/'}|${key}`
-        this.cookies.delete(id)
+        const id = `${domain || ''}|${path || '/'}|${key}`;
+        this.cookies.delete(id);
     }
 
     /**
@@ -166,8 +166,8 @@ export class CookieJar {
      * @returns True if the cookie exists, false otherwise.
      */
     hasCookie(cookie: Cookie): boolean {
-        const id = this.getCookieId(cookie)
-        return this.cookies.has(id)
+        const id = this.getCookieId(cookie);
+        return this.cookies.has(id);
     }
 
     /**
@@ -178,7 +178,7 @@ export class CookieJar {
      * @returns True if the cookie exists, false otherwise.
      */
     hasCookieByKey(key: string, domain?: string, path?: string): boolean {
-        const id = `${domain || ''}|${path || '/'}|${key}`
-        return this.cookies.has(id)
+        const id = `${domain || ''}|${path || '/'}|${key}`;
+        return this.cookies.has(id);
     }
 }

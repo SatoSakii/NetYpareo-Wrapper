@@ -20,7 +20,7 @@ export class Summary {
      * @return The total absences duration in hours.
      */
     get absencesHours(): number {
-        return Math.round((this.absencesMinutes / 60) * 100) / 100
+        return Math.round((this.absencesMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -28,7 +28,7 @@ export class Summary {
      * @return The total lates duration in hours.
      */
     get latesHours(): number {
-        return Math.round((this.latesMinutes / 60) * 100) / 100
+        return Math.round((this.latesMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -36,7 +36,7 @@ export class Summary {
      * @return The total early departures duration in hours.
      */
     get earlyDeparturesHours(): number {
-        return Math.round((this.earlyDeparturesMinutes / 60) * 100) / 100
+        return Math.round((this.earlyDeparturesMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -44,7 +44,7 @@ export class Summary {
      * @return The total justified duration in hours.
      */
     get justifiedHours(): number {
-        return Math.round((this.justifiedMinutes / 60) * 100) / 100
+        return Math.round((this.justifiedMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -52,7 +52,7 @@ export class Summary {
      * @return The total unjustified duration in hours.
      */
     get unjustifiedHours(): number {
-        return Math.round((this.unjustifiedMinutes / 60) * 100) / 100
+        return Math.round((this.unjustifiedMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -64,7 +64,7 @@ export class Summary {
             this.absencesMinutes +
             this.latesMinutes +
             this.earlyDeparturesMinutes
-        )
+        );
     }
 
     /**
@@ -72,7 +72,7 @@ export class Summary {
      * @return The total duration in hours.
      */
     get totalHours(): number {
-        return Math.round((this.totalMinutes / 60) * 100) / 100
+        return Math.round((this.totalMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -105,6 +105,6 @@ export class Summary {
                 minutes: this.totalMinutes,
                 hours: this.totalHours,
             },
-        }
+        };
     }
 }

@@ -32,7 +32,7 @@ export class Configuration {
      * @return The total duration in minutes.
      */
     get totalMinutes(): number {
-        return this.endMinute - this.startMinute
+        return this.endMinute - this.startMinute;
     }
 
     /**
@@ -40,7 +40,7 @@ export class Configuration {
      * @return The total duration in hours.
      */
     get totalHours(): number {
-        return this.totalMinutes / 60
+        return this.totalMinutes / 60;
     }
 
     /**
@@ -49,7 +49,7 @@ export class Configuration {
      * @returns True if the day is visible, false otherwise.
      */
     isDayVisible(dayNumber: number): boolean {
-        return this.days.includes(dayNumber)
+        return this.days.includes(dayNumber);
     }
 
     /**
@@ -71,6 +71,6 @@ export class Configuration {
             totalMinutes: this.totalMinutes,
             totalHours: this.totalHours,
             days: this.days,
-        }
+        };
     }
 }

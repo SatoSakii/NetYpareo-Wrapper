@@ -1,7 +1,7 @@
-import { MINUTES_PER_HOUR } from '../../constants/planning'
-import { Constraint } from './Constraint'
-import { Session } from './Session'
-import type { DayNumber, ResourceType } from './types'
+import { MINUTES_PER_HOUR } from '../../constants/planning';
+import { Constraint } from './Constraint';
+import { Session } from './Session';
+import type { DayNumber, ResourceType } from './types';
 
 export class Resource {
     /**
@@ -30,9 +30,9 @@ export class Resource {
         const totalMinutes = this.sessions.reduce(
             (sum, s) => sum + s.duration,
             0
-        )
+        );
 
-        return Math.round((totalMinutes / MINUTES_PER_HOUR) * 100) / 100
+        return Math.round((totalMinutes / MINUTES_PER_HOUR) * 100) / 100;
     }
 
     /**
@@ -40,9 +40,9 @@ export class Resource {
      * @returns An array of today's sessions.
      */
     get today(): Session[] {
-        const today = new Date().getDay() as DayNumber
+        const today = new Date().getDay() as DayNumber;
 
-        return this.sessions.filter((s) => s.dayNumber === today)
+        return this.sessions.filter(s => s.dayNumber === today);
     }
 
     /**
@@ -50,9 +50,9 @@ export class Resource {
      * @returns An array of tomorrow's sessions.
      */
     get tomorrow(): Session[] {
-        const tomorrow = ((new Date().getDay() + 1) % 7) as DayNumber
+        const tomorrow = ((new Date().getDay() + 1) % 7) as DayNumber;
 
-        return this.sessions.filter((s) => s.dayNumber === tomorrow)
+        return this.sessions.filter(s => s.dayNumber === tomorrow);
     }
 
     /**
@@ -61,7 +61,7 @@ export class Resource {
      * @returns An array of sessions for the specified day.
      */
     get homework(): Session[] {
-        return this.sessions.filter((s) => s.hasHomework)
+        return this.sessions.filter(s => s.hasHomework);
     }
 
     /**
@@ -70,7 +70,7 @@ export class Resource {
      * @returns An array of sessions for the specified day.
      */
     getDay(dayNumber: DayNumber): Session[] {
-        return this.sessions.filter((s) => s.dayNumber === dayNumber)
+        return this.sessions.filter(s => s.dayNumber === dayNumber);
     }
 
     /**
@@ -83,6 +83,6 @@ export class Resource {
             label: this.label,
             totalHours: this.totalHours,
             sessionsCount: this.sessions.length,
-        }
+        };
     }
 }

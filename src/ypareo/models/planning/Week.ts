@@ -1,5 +1,5 @@
-import { Resource } from './Resource'
-import type { WeekCode } from './types'
+import { Resource } from './Resource';
+import type { WeekCode } from './types';
 
 export class Week {
     /**
@@ -21,7 +21,7 @@ export class Week {
      * @returns The week number.
      */
     get weekNumber(): number {
-        return parseInt(this.code.toString().slice(-2))
+        return parseInt(this.code.toString().slice(-2));
     }
 
     /**
@@ -29,7 +29,7 @@ export class Week {
      * @returns The year.
      */
     get year(): number {
-        return parseInt(this.code.toString().slice(0, 4))
+        return parseInt(this.code.toString().slice(0, 4));
     }
 
     /**
@@ -37,7 +37,7 @@ export class Week {
      * @returns The primary resource.
      */
     get resource(): Resource {
-        return this.resources[0]
+        return this.resources[0];
     }
 
     /**
@@ -45,7 +45,7 @@ export class Week {
      * @returns The total hours.
      */
     get totalHours(): number {
-        return this.resources.reduce((sum, r) => sum + r.totalHours, 0)
+        return this.resources.reduce((sum, r) => sum + r.totalHours, 0);
     }
 
     /**
@@ -58,6 +58,6 @@ export class Week {
             weekNumber: this.weekNumber,
             year: this.year,
             totalHours: this.totalHours,
-        }
+        };
     }
 }

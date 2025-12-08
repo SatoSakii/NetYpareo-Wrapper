@@ -1,12 +1,12 @@
-import type { HttpClient } from '../../http'
-import { DEFAULTS_URLS } from '../constants'
-import { GradeReport, Period } from '../models'
-import { parseAvailablePeriods, parseGrades } from '../parsers'
-import { bufferToHtml, Cache } from '../utils'
+import type { HttpClient } from '../../http';
+import { DEFAULTS_URLS } from '../constants';
+import { GradeReport, Period } from '../models';
+import { parseAvailablePeriods, parseGrades } from '../parsers';
+import { bufferToHtml, Cache } from '../utils';
 
 export class GradesManager {
-    private cache = new Cache<GradeReport>(5)
-    private periodsCache: Map<number, Period[]> = new Map()
+    private cache = new Cache<GradeReport>(5);
+    private periodsCache: Map<number, Period[]> = new Map();
 
     /**
      * Creates a new GradesManager instance.
@@ -20,11 +20,11 @@ export class GradesManager {
      * @returns A promise that resolves to an array of available Period instances.
      */
     async fetchPeriods(registrationCode: number): Promise<Period[]> {
-        const cached = this.periodsCache.get(registrationCode)
+        const cached = this.periodsCache.get(registrationCode);
 
-        if (cached) return cached
+        if (cached) return cached;
 
-        const url = `${DEFAULTS_URLS.grades.default}/${registrationCode}/`
+        const url = `${DEFAULTS_URLS.grades.default}/${registrationCode}/`;
 
         const response = await this.http.get(url, {
             responseType: 'arrayBuffer',
@@ -32,14 +32,14 @@ export class GradesManager {
                 Origin: this.http.getBaseUrl(),
                 'Content-Type': 'text/html; charset=UTF-8',
             },
-        })
+        });
 
-        const html = bufferToHtml(response.data)
-        const periods = parseAvailablePeriods(html)
+        const html = bufferToHtml(response.data);
+        const periods = parseAvailablePeriods(html);
 
-        this.periodsCache.set(registrationCode, periods)
+        this.periodsCache.set(registrationCode, periods);
 
-        return periods
+        return periods;
     }
 
     /**
@@ -54,20 +54,20 @@ export class GradesManager {
         period: Period,
         subjectCode?: number
     ): Promise<GradeReport> {
-        const cacheKey = `${registrationCode}-${period.code}-${subjectCode || 'all'}`
-        const cached = this.cache.get(cacheKey)
+        const cacheKey = `${registrationCode}-${period.code}-${subjectCode || 'all'}`;
+        const cached = this.cache.get(cacheKey);
 
-        if (cached) return cached
+        if (cached) return cached;
 
-        let url = `${DEFAULTS_URLS.grades.api}/${registrationCode}/${period.code}`
+        let url = `${DEFAULTS_URLS.grades.api}/${registrationCode}/${period.code}`;
 
-        if (subjectCode) url += `/${subjectCode}`
+        if (subjectCode) url += `/${subjectCode}`;
 
-        const params = new URLSearchParams()
+        const params = new URLSearchParams();
         if (period.sessionCode)
-            params.append('codeSession', period.sessionCode.toString())
+            params.append('codeSession', period.sessionCode.toString());
 
-        if (params.toString()) url += `?${params.toString()}`
+        if (params.toString()) url += `?${params.toString()}`;
 
         const response = await this.http.get(url, {
             responseType: 'arrayBuffer',
@@ -75,14 +75,14 @@ export class GradesManager {
                 Origin: this.http.getBaseUrl(),
                 'Content-Type': 'text/html; charset=UTF-8',
             },
-        })
+        });
 
-        const html = bufferToHtml(response.data)
-        const report = parseGrades(html)
+        const html = bufferToHtml(response.data);
+        const report = parseGrades(html);
 
-        this.cache.set(cacheKey, report)
+        this.cache.set(cacheKey, report);
 
-        return report
+        return report;
     }
 
     /**
@@ -95,12 +95,12 @@ export class GradesManager {
         registrationCode: number,
         subjectCode?: number
     ): Promise<GradeReport> {
-        const periods = await this.fetchPeriods(registrationCode)
-        const fullYear = periods.find((p) => p.isFullYear)
+        const periods = await this.fetchPeriods(registrationCode);
+        const fullYear = periods.find(p => p.isFullYear);
 
-        if (!fullYear) throw new Error('Full year period not found')
+        if (!fullYear) throw new Error('Full year period not found');
 
-        return this.fetch(registrationCode, fullYear, subjectCode)
+        return this.fetch(registrationCode, fullYear, subjectCode);
     }
 
     /**
@@ -115,9 +115,9 @@ export class GradesManager {
         period: Period,
         subjectCode?: number
     ): Promise<GradeReport> {
-        const cacheKey = `${registrationCode}-${period.code}-${subjectCode || 'all'}`
-        this.cache.delete(cacheKey)
+        const cacheKey = `${registrationCode}-${period.code}-${subjectCode || 'all'}`;
+        this.cache.delete(cacheKey);
 
-        return this.fetch(registrationCode, period, subjectCode)
+        return this.fetch(registrationCode, period, subjectCode);
     }
 }

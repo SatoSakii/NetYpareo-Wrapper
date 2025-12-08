@@ -1,4 +1,4 @@
-import type { RecordStatus, RecordType } from './types'
+import type { RecordStatus, RecordType } from './types';
 
 export class AttendRecord {
     /**
@@ -26,7 +26,7 @@ export class AttendRecord {
      * @return The duration in hours.
      */
     get durationHours(): number {
-        return Math.round((this.durationMinutes / 60) * 100) / 100
+        return Math.round((this.durationMinutes / 60) * 100) / 100;
     }
 
     /**
@@ -34,7 +34,7 @@ export class AttendRecord {
      * @return True if the record is justified, false otherwise.
      */
     get isJustified(): boolean {
-        return this.status === 'justified'
+        return this.status === 'justified';
     }
 
     /**
@@ -42,7 +42,7 @@ export class AttendRecord {
      * @return True if the record is an absence, false otherwise.
      */
     get isAbsence(): boolean {
-        return this.type === 'absence'
+        return this.type === 'absence';
     }
 
     /**
@@ -50,7 +50,7 @@ export class AttendRecord {
      * @return True if the record is a late arrival, false otherwise.
      */
     get isLate(): boolean {
-        return this.type === 'late'
+        return this.type === 'late';
     }
 
     /**
@@ -58,7 +58,7 @@ export class AttendRecord {
      * @return True if the record is an early departure, false otherwise.
      */
     get isEarlyDeparture(): boolean {
-        return this.type === 'early_departure'
+        return this.type === 'early_departure';
     }
 
     /**
@@ -76,6 +76,6 @@ export class AttendRecord {
             status: this.status,
             type: this.type,
             isJustified: this.isJustified,
-        }
+        };
     }
 }

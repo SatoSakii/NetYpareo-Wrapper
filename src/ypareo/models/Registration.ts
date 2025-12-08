@@ -16,7 +16,7 @@ export class Registration {
      * @return The registration name and year.
      */
     toString(): string {
-        return this.year ? `${this.name} (${this.year})` : this.name
+        return this.year ? `${this.name} (${this.year})` : this.name;
     }
 
     /**
@@ -28,6 +28,6 @@ export class Registration {
             code: this.code,
             name: this.name,
             year: this.year,
-        }
+        };
     }
 }

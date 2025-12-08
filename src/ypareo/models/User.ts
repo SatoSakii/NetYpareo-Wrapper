@@ -1,21 +1,21 @@
-import type { UserData } from '../types'
-import { Registration } from './'
+import type { UserData } from '../types';
+import { Registration } from './';
 
 export class User {
-    public username: string
-    public fullName?: string
-    public avatarUrl?: string
-    public registrations: Registration[]
+    public username: string;
+    public fullName?: string;
+    public avatarUrl?: string;
+    public registrations: Registration[];
 
     /**
      * Create a new User instance.
      * @param data The user data.
      */
     constructor(data: UserData) {
-        this.username = data.username
-        this.fullName = data.fullName
-        this.avatarUrl = data.avatarUrl
-        this.registrations = data.registrations || []
+        this.username = data.username;
+        this.fullName = data.fullName;
+        this.avatarUrl = data.avatarUrl;
+        this.registrations = data.registrations || [];
     }
 
     /**
@@ -23,7 +23,7 @@ export class User {
      * @return The first name, or undefined if fullName is not set.
      */
     get firstName(): string | undefined {
-        return this.fullName?.split(' ')[0]
+        return this.fullName?.split(' ')[0];
     }
 
     /**
@@ -32,13 +32,13 @@ export class User {
      */
     get lastName(): string | undefined {
         if (typeof this.fullName === 'string') {
-            const parts = this.fullName.trim().split(' ')
+            const parts = this.fullName.trim().split(' ');
 
-            return parts && parts.length > 1
-                ? parts.slice(1).join(' ')
-                : undefined
+            return parts && parts.length > 1 ?
+                    parts.slice(1).join(' ')
+                :   undefined;
         }
-        return undefined
+        return undefined;
     }
 
     /**
@@ -46,7 +46,7 @@ export class User {
      * @return The first registration, or undefined if there are no registrations.
      */
     get defaultRegistration(): Registration | undefined {
-        return this.registrations[0]
+        return this.registrations[0];
     }
 
     /**
@@ -55,7 +55,7 @@ export class User {
      * @return The registration with the given code, or undefined if not found.
      */
     getRegistration(code: number): Registration | undefined {
-        return this.registrations.find((r) => r.code === code)
+        return this.registrations.find(r => r.code === code);
     }
 
     /**
@@ -63,7 +63,7 @@ export class User {
      * @return The full name if available, otherwise the username.
      */
     toString(): string {
-        return this.fullName || this.username
+        return this.fullName || this.username;
     }
 
     /**
@@ -76,6 +76,6 @@ export class User {
             fullName: this.fullName,
             avatarUrl: this.avatarUrl,
             registrations: this.registrations,
-        }
+        };
     }
 }

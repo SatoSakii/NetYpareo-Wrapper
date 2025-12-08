@@ -1,12 +1,12 @@
-import type { HttpClient } from '../../http'
-import { DEFAULTS_URLS } from '../constants'
-import type { ExportMode, WeekCode } from '../models/planning'
-import { Planning } from '../models/planning/Planning'
-import { parsePlanning } from '../parsers/planning'
-import { bufferToHtml, Cache } from '../utils'
+import type { HttpClient } from '../../http';
+import { DEFAULTS_URLS } from '../constants';
+import type { ExportMode, WeekCode } from '../models/planning';
+import { Planning } from '../models/planning/Planning';
+import { parsePlanning } from '../parsers/planning';
+import { bufferToHtml, Cache } from '../utils';
 
 export class PlanningManager {
-    private cache = new Cache<Planning>(5)
+    private cache = new Cache<Planning>(5);
     /**
      * Creates a new PlanningManager instance.
      * @param http - The HttpClient instance for making requests.
@@ -19,27 +19,28 @@ export class PlanningManager {
      * @returns A promise that resolves to the Planning instance.
      */
     async fetch(weekCode?: WeekCode): Promise<Planning> {
-        const cacheKey = weekCode?.toString() ?? 'current'
-        const cached = this.cache.get(cacheKey)
+        const cacheKey = weekCode?.toString() ?? 'current';
+        const cached = this.cache.get(cacheKey);
 
-        if (cached) return cached
+        if (cached) return cached;
 
-        const url = weekCode
-            ? `${DEFAULTS_URLS.planning.default}?semaineDebut=${weekCode}`
-            : DEFAULTS_URLS.planning.default
+        const url =
+            weekCode ?
+                `${DEFAULTS_URLS.planning.default}?semaineDebut=${weekCode}`
+            :   DEFAULTS_URLS.planning.default;
 
         const response = await this.http.get(url, {
             headers: {
                 Origin: this.http.getBaseUrl(),
                 'Content-Type': 'text/html; charset=UTF-8',
             },
-        })
-        const html = bufferToHtml(response.data)
-        const planning = parsePlanning(html, this)
+        });
+        const html = bufferToHtml(response.data);
+        const planning = parsePlanning(html, this);
 
-        this.cache.set(cacheKey, planning)
+        this.cache.set(cacheKey, planning);
 
-        return planning
+        return planning;
     }
 
     /**
@@ -48,10 +49,10 @@ export class PlanningManager {
      * @returns A promise that resolves to the refreshed Planning instance.
      */
     async refresh(weekCode?: WeekCode): Promise<Planning> {
-        if (weekCode) this.cache.delete(weekCode.toString())
-        else this.cache.clear()
+        if (weekCode) this.cache.delete(weekCode.toString());
+        else this.cache.clear();
 
-        return this.fetch(weekCode)
+        return this.fetch(weekCode);
     }
 
     /**
@@ -73,8 +74,8 @@ export class PlanningManager {
                     'Content-Type': 'text/html; charset=UTF-8',
                 },
             }
-        )
+        );
 
-        return Buffer.from(response.data)
+        return Buffer.from(response.data);
     }
 }

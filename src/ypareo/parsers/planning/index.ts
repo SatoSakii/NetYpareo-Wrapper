@@ -1,1 +1,1 @@
-export { parsePlanning } from './planning'
+export { parsePlanning } from './planning';
