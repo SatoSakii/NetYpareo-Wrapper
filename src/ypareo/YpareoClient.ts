@@ -1,4 +1,4 @@
-import { AuthManager } from './core/AuthManager'
+import { AuthManager } from './core/auth/AuthManager'
 import { BaseClient } from './core/BaseClient'
 import { EventManager } from './core/EventManager'
 import { AttendanceManager, GradesManager, PlanningManager } from './managers'
@@ -136,7 +136,6 @@ export class YpareoClient extends BaseClient {
 
     /**
      * Clears the stored password from the AuthManager.
-     * @returns void
      */
     protected clearPassword(): void {
         this.auth.clearPassword()

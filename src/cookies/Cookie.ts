@@ -47,8 +47,8 @@ export class Cookie {
         if (!keyValue || !keyValue.includes('=')) return null
 
         const equalIndex = keyValue.indexOf('=')
-        const key = keyValue.slice(0, equalIndex).trim()
-        const value = keyValue.slice(equalIndex + 1).trim()
+        const cKey = keyValue.slice(0, equalIndex).trim()
+        const cValue = keyValue.slice(equalIndex + 1).trim()
 
         const options: CookieOptions = {}
         const url = new URL(requestUrl)
@@ -107,7 +107,7 @@ export class Cookie {
         }
         if (!options.domain) options.domain = `.${url.hostname}`
 
-        return new Cookie(key, value, options)
+        return new Cookie(cKey, cValue, options)
     }
 
     /**

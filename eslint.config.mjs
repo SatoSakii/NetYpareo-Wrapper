@@ -5,7 +5,11 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import importPlugin from 'eslint-plugin-import';
 import prettierPlugin from 'eslint-plugin-prettier';
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+let __dirname = path.dirname(new URL(import.meta.url).pathname);
+const isWindows = process.platform === 'win32';
+
+if (isWindows && __dirname.startsWith('/'))
+	__dirname = __dirname.slice(1);
 
 export default [
 	{

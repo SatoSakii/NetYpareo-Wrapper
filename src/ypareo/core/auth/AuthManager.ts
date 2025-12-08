@@ -1,16 +1,11 @@
-import {
-    createCipheriv,
-    createDecipheriv,
-    randomBytes,
-    scryptSync,
-} from 'crypto'
-
-import type { HttpClient, HttpResponse } from '../../http'
-import type { EventManager } from '../core/EventManager'
-import { SessionManager } from '../core/SessionManager'
-import { User } from '../models'
-import { extractCsrfToken, parseUser } from '../parsers'
-import type { YpareoUrls } from '../types'
+import { PasswordManager } from './PasswordManager'
+import { HttpStatusCode, type HttpClient } from '../../../http'
+import type { EventManager } from '../EventManager'
+import { SessionManager } from '../SessionManager'
+import { User } from '../../models'
+import { extractCsrfToken, parseUser } from '../../parsers'
+import type { YpareoUrls } from '../../types'
+import { parseLoginError } from './LoginErrors'
 
 export class AuthManager {
     private http: HttpClient
@@ -18,8 +13,7 @@ export class AuthManager {
     private events: EventManager
     private urls: YpareoUrls
     private username: string
-    private encryptedPassword: string | null
-    private encryptionKey: Buffer
+	private passwordManager: PasswordManager
 
     /**
      * Creates a new AuthManager instance.
@@ -44,62 +38,14 @@ export class AuthManager {
         this.urls = urls
         this.username = username
 
-        this.encryptionKey = scryptSync(
-            username,
-            username.split('').reverse().join(''),
-            32
-        )
-        this.encryptedPassword = this.encryptPassword(password)
-    }
-
-    /**
-     * Encrypts the provided password using AES-256-CBC.
-     * @param password - The plaintext password to encrypt.
-     * @returns The encrypted password as a hex string.
-     */
-    private encryptPassword(password: string): string {
-        const iv = randomBytes(16)
-        const cipher = createCipheriv('aes-256-cbc', this.encryptionKey, iv)
-
-        let encrypted = cipher.update(password, 'utf8', 'hex')
-        encrypted += cipher.final('hex')
-
-        return iv.toString('hex') + ':' + encrypted
-    }
-
-    /**
-     * Decrypts the stored encrypted password.
-     * @returns The decrypted plaintext password.
-     */
-    private decryptPassword(): string | null {
-        if (!this.encryptedPassword) return null
-
-        try {
-            const parts = this.encryptedPassword.split(':')
-            const iv = Buffer.from(parts[0], 'hex')
-            const encrypted = parts[1]
-
-            const decipher = createDecipheriv(
-                'aes-256-cbc',
-                this.encryptionKey,
-                iv
-            )
-
-            let decrypted = decipher.update(encrypted, 'hex', 'utf8')
-            decrypted += decipher.final('utf8')
-
-            return decrypted
-        } catch {
-            return null
-        }
+		this.passwordManager = new PasswordManager(username, password);
     }
 
     /**
      * Clears the stored password from memory.
-     * @returns void
      */
     clearPassword(): void {
-        if (this.encryptedPassword) this.encryptedPassword = null
+        this.passwordManager.clear()
     }
 
     /**
@@ -113,7 +59,7 @@ export class AuthManager {
             return user
         }
 
-        const password = this.decryptPassword()
+        const password = this.passwordManager.decrypt()
         if (!password)
             throw new Error('Password has been cleared. Cannot login.')
 
@@ -127,7 +73,7 @@ export class AuthManager {
                 },
             })
 
-            if (loginRes.status !== 200)
+            if (loginRes.status !== HttpStatusCode.OK)
                 throw new Error(
                     `Failed to load login page. Status: ${loginRes.status}`
                 )
@@ -152,12 +98,12 @@ export class AuthManager {
                 },
             })
 
-            if (authRes.status !== 200)
+            if (authRes.status !== HttpStatusCode.OK)
                 throw new Error(
                     `Authentication failed. Status: ${authRes.status}`
                 )
 
-            const { loginError, errorMessage } = this.isLoginError(authRes)
+            const { loginError, errorMessage } = parseLoginError(authRes)
             if (loginError)
                 throw new Error('Authentication failed: ' + errorMessage)
 
@@ -217,8 +163,8 @@ export class AuthManager {
                 },
             })
 
-            const { loginError, errorMessage } = this.isLoginError(homeRes)
-            if (homeRes.status !== 200 || loginError) {
+            const { loginError, errorMessage } = parseLoginError(homeRes)
+            if (homeRes.status !== HttpStatusCode.OK || loginError) {
                 if (autoRelogin) {
                     this.session.reset()
                     return await this.login()
@@ -239,7 +185,7 @@ export class AuthManager {
                 throw error
             }
 
-            if (autoRelogin && this.encryptedPassword) {
+            if (autoRelogin && this.passwordManager.hasPassword()) {
                 try {
                     this.session.reset()
                     return await this.login()
@@ -276,26 +222,6 @@ export class AuthManager {
     }
 
     /**
-     * Determines if the provided HTML indicates a login error.
-     * @param response - The HTTP response data to check.
-     * @returns True if a login error is detected, false otherwise.
-     */
-    private isLoginError(response: HttpResponse): {
-        loginError: boolean
-        errorMessage: string | null
-    } {
-        let errorMessage = 'Unknown error.'
-        const error =
-            response.config.url.toString().slice(-2).replace(/\//g, '') || ''
-
-        if (!response.config.url.toString().includes('login'))
-            return { loginError: false, errorMessage: null }
-        if (error === '2') errorMessage = 'Invalid credentials.'
-        else if (error === '4') errorMessage = 'Account disabled.'
-        return { loginError: true, errorMessage: errorMessage }
-    }
-
-    /**
      * Checks if there is an active session.
      * @returns True if connected, false otherwise.
      */
@@ -309,13 +235,5 @@ export class AuthManager {
      */
     getUser(): User | null {
         return this.session.getUser()
-    }
-
-    /**
-     * Checks if a password is stored.
-     * @returns True if a password is stored, false otherwise.
-     */
-    hasPassword(): boolean {
-        return this.encryptedPassword !== null
     }
 }

@@ -1,4 +1,7 @@
 trailingComma: "es5"
 tabWidth: 4
-semi: false
+semi: true
 singleQuote: true
+experimentalTernaries: true
+arrowParens: "avoid"
+bracketSameLine: false

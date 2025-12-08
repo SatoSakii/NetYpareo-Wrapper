@@ -9,6 +9,11 @@ import {
     RequestConfig,
     RequestOptions,
     RetryOptions,
+	HttpStatusCode,
+	HttpClientDefaults,
+	REDIRECT_STATUS_CODES,
+	REDIRECT_TO_GET_STATUS_CODES,
+	DEFAULT_RETRY_STATUS_CODES
 } from './types'
 
 export class HttpClient {
@@ -31,13 +36,13 @@ export class HttpClient {
         this.jar = options.jar || new CookieJar()
         this.baseUrl = options.baseUrl?.replace(/\/+$/, '') || ''
         this.followRedirects = options.followRedirects !== false
-        this.maxRedirects = options.maxRedirects || 10
-        this.timeout = options.timeout || 30000
+        this.maxRedirects = options.maxRedirects || HttpClientDefaults.MAX_REDIRECTS
+        this.timeout = options.timeout || HttpClientDefaults.TIMEOUT_MS
         this.defaultHeaders = options.headers || {}
         this.retry = this.buildRetryOptions(options.retry)
         this.validateStatus =
             options.validateStatus ||
-            ((status) => status >= 200 && status < 300)
+            ((status) => status >= HttpStatusCode.OK && status < HttpStatusCode.MULTIPLE_CHOICES)
         this.throwOnHttpError = options.throwOnHttpError !== false
     }
 
@@ -207,8 +212,8 @@ export class HttpClient {
         const headers = this.buildHeaders(url, method, body, options.headers)
         const { fetchBody, finalHeaders } = this.prepareBody(body, headers)
 
-        const coontroller = new AbortController()
-        const timeoutId = setTimeout(() => coontroller.abort(), config.timeout)
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), config.timeout)
 
         try {
             const response = await fetch(url, {
@@ -222,7 +227,7 @@ export class HttpClient {
                     | ReadableStream
                     | undefined,
                 redirect: 'manual',
-                signal: coontroller.signal,
+                signal: controller.signal,
             })
 
             clearTimeout(timeoutId)
@@ -243,7 +248,7 @@ export class HttpClient {
                 let redirectMethod: HttpMethod = method
                 let redirectBody: RequestBody | undefined = body
 
-                if ([301, 302, 303].includes(response.status)) {
+                if (REDIRECT_TO_GET_STATUS_CODES.includes(response.status)) {
                     redirectMethod = 'GET'
                     redirectBody = null
                 }
@@ -469,7 +474,7 @@ export class HttpClient {
         type: string
     ): Promise<T> {
         if (
-            response.status === 204 ||
+            response.status === HttpStatusCode.NO_CONTENT ||
             response.headers.get('Content-Length') === '0'
         )
             return null as T
@@ -523,7 +528,7 @@ export class HttpClient {
      * @returns Whether the status code is a redirect.
      */
     private isRedirect(status: number): boolean {
-        return [301, 302, 303, 307, 308].includes(status)
+        return REDIRECT_STATUS_CODES.includes(status)
     }
 
     /**
@@ -548,11 +553,11 @@ export class HttpClient {
     private buildRetryOptions(options?: Partial<RetryOptions>): RetryOptions {
         return {
             enabled: options?.enabled || false,
-            maxRetries: options?.maxRetries ?? 3,
+            maxRetries: options?.maxRetries ?? HttpClientDefaults.MAX_RETRIES,
             retryDelay:
                 options?.retryDelay ||
                 ((attempt) => Math.pow(2, attempt) * 1000),
-            retryOn: options?.retryOn || [408, 429, 500, 502, 503, 504],
+            retryOn: options?.retryOn || DEFAULT_RETRY_STATUS_CODES,
             shouldRetry: options?.shouldRetry,
         }
     }

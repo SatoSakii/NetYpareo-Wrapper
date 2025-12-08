@@ -14,4 +14,4 @@ export const DEFAULTS_HEADERS = {
     'Sec-Fetch-Site': 'same-origin',
     'Sec-Fetch-User': '?1',
     'Upgrade-Insecure-Requests': '1',
-}
+} as const

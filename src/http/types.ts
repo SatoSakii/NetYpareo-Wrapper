@@ -9,6 +9,58 @@ export type HttpMethod =
     | 'HEAD'
     | 'OPTIONS'
 
+export const HttpStatusCode = {
+	OK: 200,
+	NO_CONTENT: 204,
+
+	MULTIPLE_CHOICES: 300,
+	MOVED_PERMANENTLY: 301,
+	FOUND: 302,
+	SEE_OTHER: 303,
+	TEMPORARY_REDIRECT: 307,
+	PERMANENT_REDIRECT: 308,
+
+	BAD_REQUEST: 400,
+	REQUEST_TIMEOUT: 408,
+	TOO_MANY_REQUESTS: 429,
+
+	INTERNAL_SERVER_ERROR: 500,
+	BAD_GATEWAY: 502,
+	SERVICE_UNAVAILABLE: 503,
+	GATEWAY_TIMEOUT: 504
+}
+
+export type HttpStatusCode = (typeof HttpStatusCode)[keyof typeof HttpStatusCode]
+
+export const REDIRECT_STATUS_CODES: HttpStatusCode[] = [
+	HttpStatusCode.MOVED_PERMANENTLY,
+	HttpStatusCode.FOUND,
+	HttpStatusCode.SEE_OTHER,
+	HttpStatusCode.TEMPORARY_REDIRECT,
+	HttpStatusCode.PERMANENT_REDIRECT
+]
+
+export const REDIRECT_TO_GET_STATUS_CODES: HttpStatusCode[] = [
+	HttpStatusCode.MOVED_PERMANENTLY,
+	HttpStatusCode.FOUND,
+	HttpStatusCode.SEE_OTHER
+]
+
+export const DEFAULT_RETRY_STATUS_CODES: HttpStatusCode[] = [
+	HttpStatusCode.REQUEST_TIMEOUT,
+	HttpStatusCode.TOO_MANY_REQUESTS,
+	HttpStatusCode.INTERNAL_SERVER_ERROR,
+	HttpStatusCode.BAD_GATEWAY,
+	HttpStatusCode.SERVICE_UNAVAILABLE,
+	HttpStatusCode.GATEWAY_TIMEOUT
+]
+
+export const HttpClientDefaults = {
+	TIMEOUT_MS: 30000,
+	MAX_REDIRECTS: 10,
+	MAX_RETRIES: 3
+}
+
 export type RequestBody =
     | string
     | URLSearchParams
@@ -101,7 +153,7 @@ export class HttpError extends Error {
      */
     isClientError(): boolean {
         return (
-            this.status !== undefined && this.status >= 400 && this.status < 500
+            this.status !== undefined && this.status >= HttpStatusCode.BAD_REQUEST && this.status < HttpStatusCode.INTERNAL_SERVER_ERROR
         )
     }
 
@@ -110,7 +162,7 @@ export class HttpError extends Error {
      * @returns True if the error is a server error, false otherwise.
      */
     isServerError(): boolean {
-        return this.status !== undefined && this.status >= 500
+        return this.status !== undefined && this.status >= HttpStatusCode.INTERNAL_SERVER_ERROR
     }
 
     /**
